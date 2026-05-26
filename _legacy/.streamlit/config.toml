@@ -1,0 +1,16 @@
+[server]
+port = 5000
+headless = false
+runOnSave = false
+
+[theme]
+primaryColor = "#ffffff"
+backgroundColor = "#121315"
+secondaryBackgroundColor = "#1b1d22"
+textColor = "#f8f9fa"
+font = "sans serif"
+base = "dark"
+
+[client]
+# Permite mostrar el menú de configuración de Streamlit para que el usuario pueda alternar entre modo Claro y Oscuro
+toolbarMode = "viewer"

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Voik — Galería{% endblock %}
+
+{% block content %}
+<!-- HERO SECTION (Obsidian Series) -->
+<section class="hero-section">
+    <div class="hero-text">
+        <p class="hero-subtitle">Colección de Invierno 2024</p>
+        <h1 class="hero-title">La Serie</h1>
+        <h1 class="hero-title">
+            <span class="hero-title-italic">Obsidiana</span><span class="hero-title-bold">Oscura</span>
+        </h1>
+        <p class="hero-desc">
+            Hardware minimalista diseñado para el santuario moderno. Diseños atemporales para la vida contemporánea.
+        </p>
+        <button class="hero-btn" onclick="document.getElementById('catalogo').scrollIntoView({behavior: 'smooth'});">VER COLECCIÓN</button>
+    </div>
+    <div class="hero-image-container">
+        <img src="https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?q=80&w=2070&auto=format&fit=crop" alt="Obsidiana Oscura Hero" class="hero-img">
+    </div>
+</section>
+
+<hr>
+
+<!-- PRODUCT CATALOG -->
+<section id="catalogo" style="padding-top: 40px;">
+    <h3 class="section-title">Catálogo Principal</h3>
+
+    {% if productos %}
+        <div class="product-grid">
+            {% for prod in productos %}
+                <div class="product-card">
+                    <div class="product-img-wrapper">
+                        <!-- Use default Unsplash image matching original Streamlit design -->
+                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&auto=format&fit=crop" alt="{{ prod.nombre }}" class="product-card-img">
+                    </div>
+                    <div class="product-info-row">
+                        <div class="product-details">
+                            <p class="product-name">{{ prod.nombre }}</p>
+                            <p class="product-tag">Exclusivo Web</p>
+                        </div>
+                        <div class="product-price">
+                            ${{ "{:,.0f}".format(prod.precio) }}
+                        </div>
+                    </div>
+                    <form action="{{ url_for('comprar_producto', product_id=prod.id) }}" method="POST">
+                        <button type="submit" class="buy-btn">🛒 Comprar</button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="info-alert">
+            <p class="info-alert-text">No hay productos disponibles actualmente.</p>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

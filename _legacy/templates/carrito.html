@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Voik — Tu Bolsa{% endblock %}
+
+{% block content %}
+<section style="padding-top: 40px; padding-bottom: 20px; border-bottom: 1px solid var(--hr-color); margin-bottom: 30px;">
+    <h1 style="font-size: 40px; font-weight: 300; margin-bottom: 0;">Tu Bolsa 🛍️</h1>
+</section>
+
+{% if not session.get('user_id') %}
+    <div class="flash-message flash-warning" style="margin-bottom: 20px;">
+        ⚠️ Debes iniciar sesión usando el menú de perfil (👤) arriba a la derecha para ver tu bolsa de compras.
+    </div>
+    <div style="margin-top: 20px;">
+        <button class="hero-btn" onclick="location.href='/login'">Iniciar Sesión</button>
+    </div>
+{% else %}
+    {% if cart_items %}
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Precio Unitario</th>
+                    <th>Cantidad</th>
+                    <th>Total</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart_items %}
+                    <tr>
+                        <td>{{ item.nombre }}</td>
+                        <td>${{ "{:,.0f}".format(item.precio) }}</td>
+                        <td>{{ item.qty }}</td>
+                        <td>${{ "{:,.0f}".format(item.precio * item.qty) }}</td>
+                        <td>
+                            <form action="{{ url_for('eliminar_carrito', product_id=item.id) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="buy-btn" style="padding: 4px 10px; font-size: 12px; display:inline-block; width: auto; margin:0;">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <div style="text-align: right; margin-bottom: 30px;">
+            <h3>Total: ${{ "{:,.0f}".format(total_price) }}</h3>
+        </div>
+        
+        <div style="display: flex; gap: 15px; justify-content: flex-end;">
+            <button class="buy-btn" onclick="location.href='/'" style="width: auto; padding: 12px 30px;">Seguir Comprando</button>
+            <form action="{{ url_for('checkout_carrito') }}" method="POST">
+                <button type="submit" class="hero-btn" style="padding: 12px 40px;">Proceder al Pago</button>
+            </form>
+        </div>
+    {% else %}
+        <div class="info-alert">
+            <p class="info-alert-text">Tu bolsa está vacía. Explora nuestra Colección para añadir productos.</p>
+        </div>
+        <div style="margin-top: 20px;">
+            <button class="hero-btn" onclick="location.href='/'">Explorar Colección</button>
+        </div>
+    {% endif %}
+{% endif %}
+{% endblock %}

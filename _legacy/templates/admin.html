@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Voik — Panel Admin{% endblock %}
+
+{% block content %}
+<section style="padding: 40px 0;">
+    <h1 style="font-weight: 300; margin-bottom: 30px;">Panel de Administración de Productos</h1>
+    
+    <!-- ADD PRODUCT FORM -->
+    <div style="background-color: var(--card-bg); border: 1px solid var(--card-border); padding: 30px; border-radius: 6px; margin-bottom: 40px;">
+        <h3 style="margin-bottom: 20px; font-weight: 400;">Agregar Nuevo Producto</h3>
+        <form action="{{ url_for('admin_agregar_producto') }}" method="POST">
+            <div class="form-group">
+                <label for="prod_nombre" class="form-label">Nombre del Producto</label>
+                <input type="text" id="prod_nombre" name="prod_nombre" class="form-control" placeholder="Ej: Auriculares Obsidian" required>
+            </div>
+            
+            <div style="display: flex; gap: 20px;">
+                <div class="form-group" style="flex: 1;">
+                    <label for="prod_precio" class="form-label">Precio ($)</label>
+                    <input type="number" id="prod_precio" name="prod_precio" class="form-control" placeholder="100" min="0" step="1" required>
+                </div>
+                
+                <div class="form-group" style="flex: 1;">
+                    <label for="prod_existencia" class="form-label">Existencia (Cantidad)</label>
+                    <input type="number" id="prod_existencia" name="prod_existencia" class="form-control" placeholder="10" min="0" step="1" required>
+                </div>
+            </div>
+            
+            <button type="submit" class="submit-btn" style="width: auto; padding: 12px 30px;">Crear Producto</button>
+        </form>
+    </div>
+
+    <!-- PRODUCTS TABLE -->
+    <h3 style="font-weight: 400; margin-bottom: 20px;">Productos Actuales</h3>
+    {% if productos %}
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Precio</th>
+                    <th>Existencia</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for prod in productos %}
+                    <tr>
+                        <td>{{ prod.id }}</td>
+                        <td>{{ prod.nombre }}</td>
+                        <td>${{ "{:,.0f}".format(prod.precio) }}</td>
+                        <td>{{ prod.existencia }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <!-- DELETE PRODUCT -->
+        <div style="background-color: var(--card-bg); border: 1px solid var(--card-border); padding: 30px; border-radius: 6px; margin-top: 30px;">
+            <h3 style="margin-bottom: 20px; font-weight: 400; color: #dc3545;">Eliminar Producto</h3>
+            <form action="{{ url_for('admin_eliminar_producto') }}" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este producto?');">
+                <div class="form-group">
+                    <label for="id_to_delete" class="form-label">Seleccionar Producto a Eliminar</label>
+                    <select id="id_to_delete" name="id_to_delete" class="form-control" required style="height: 48px;">
+                        {% for prod in productos %}
+                            <option value="{{ prod.id }}">{{ prod.nombre }} (ID: {{ prod.id }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="submit-btn" style="width: auto; padding: 12px 30px; background-color: #dc3545;">Eliminar</button>
+            </form>
+        </div>
+    {% else %}
+        <div class="info-alert">
+            <p class="info-alert-text">No hay productos en la base de datos.</p>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

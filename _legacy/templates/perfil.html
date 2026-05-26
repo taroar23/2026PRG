@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+
+{% block title %}Voik — Perfil{% endblock %}
+
+{% block content %}
+<!-- USER AVATAR & HEADER -->
+<div class="profile-header">
+    <div class="avatar-circle">
+        {{ user.nombre[0].upper() }}
+    </div>
+    <h2>{{ user.nombre }}</h2>
+    <p class="profile-email">{{ user.email }}</p>
+</div>
+
+<!-- PROFILE LAYOUT -->
+<div class="profile-layout">
+    <!-- Sidebar Menu -->
+    <aside class="profile-sidebar">
+        {% set active_tab = request.args.get('tab', 'Inicio') %}
+        
+        <button class="profile-menu-item {% if active_tab == 'Inicio' %}active{% endif %}" onclick="location.href='/perfil?tab=Inicio'">
+            <img src="{{ url_for('static', filename='imagenes/user.svg.svg') }}" style="width: 18px; height: 18px;">
+            <span>Mi Cuenta</span>
+        </button>
+        
+        <button class="profile-menu-item {% if active_tab == 'Guardado' %}active{% endif %}" onclick="location.href='/perfil?tab=Guardado'">
+            <img src="{{ url_for('static', filename='imagenes/heart.svg.svg') }}" style="width: 18px; height: 18px;">
+            <span>Guardado</span>
+        </button>
+        
+        <button class="profile-menu-item {% if active_tab == 'Cuotas' %}active{% endif %}" onclick="location.href='/perfil?tab=Cuotas'">
+            <img src="{{ url_for('static', filename='imagenes/banknote.svg.svg') }}" style="width: 18px; height: 18px;">
+            <span>Cuotas</span>
+        </button>
+        
+        <button class="profile-menu-item {% if active_tab == 'Suscripciones' %}active{% endif %}" onclick="location.href='/perfil?tab=Suscripciones'">
+            <img src="{{ url_for('static', filename='imagenes/credit-card.svg.svg') }}" style="width: 18px; height: 18px;">
+            <span>Suscripciones</span>
+        </button>
+        
+        <button class="profile-menu-item {% if active_tab == 'Historial' %}active{% endif %}" onclick="location.href='/perfil?tab=Historial'">
+            <img src="{{ url_for('static', filename='imagenes/clipboard-list.svg.svg') }}" style="width: 18px; height: 18px;">
+            <span>Historial de pedidos</span>
+        </button>
+        
+        <button class="profile-menu-item {% if active_tab == 'Configuracion' %}active{% endif %}" onclick="location.href='/perfil?tab=Configuracion'">
+            <img src="{{ url_for('static', filename='imagenes/settings.svg.svg') }}" style="width: 18px; height: 18px;">
+            <span>Configuración</span>
+        </button>
+        
+        <button class="profile-menu-item {% if active_tab == 'Ayuda' %}active{% endif %}" onclick="location.href='/perfil?tab=Ayuda'">
+            <img src="{{ url_for('static', filename='imagenes/circle-question-mark.svg.svg') }}" style="width: 18px; height: 18px;">
+            <span>Ayuda</span>
+        </button>
+    </aside>
+
+    <!-- Main Content Area -->
+    <section class="profile-content">
+        {% if active_tab == 'Inicio' %}
+            <!-- INICIO / ACCOUNT OVERVIEW -->
+            <div class="dark-card">
+                <div class="dark-card-icon">
+                    <img src="{{ url_for('static', filename='imagenes/credit-card' + ('white' if not session.get('light_mode', True) else '') + '.svg.svg') }}" style="width: 60px; height: 60px;">
+                </div>
+                <h3 class="dark-card-title">Paga más rápido</h3>
+                <p class="dark-card-text">Ingresa y verifica un número de teléfono para pagar más rápido en millones de tiendas</p>
+                <button class="hero-btn" onclick="location.href='/perfil?tab=PagarRapido'" style="width: 100%;">Agregar teléfono</button>
+            </div>
+            
+            <div class="quick-cards">
+                <div class="dark-card" onclick="location.href='/perfil?tab=Guardado'" style="cursor: pointer; margin-bottom: 0;">
+                    <div class="dark-card-icon">
+                        <img src="{{ url_for('static', filename='imagenes/heart' + ('white' if not session.get('light_mode', True) else '') + '.svg.svg') }}" style="width: 50px; height: 50px;">
+                    </div>
+                    <h4 class="dark-card-title">Guardado</h4>
+                    <button class="buy-btn" style="margin-top: 15px;">Ver guardados</button>
+                </div>
+                
+                <div class="dark-card" style="margin-bottom: 0;">
+                    <div class="dark-card-icon">
+                        <img src="{{ url_for('static', filename='imagenes/van' + ('white' if not session.get('light_mode', True) else '') + '.svg.svg') }}" style="width: 50px; height: 50px;">
+                    </div>
+                    <h4 class="dark-card-title">Envíos</h4>
+                    <p class="dark-card-text" style="font-size: 11px; margin-top: 10px;">Sin envíos pendientes</p>
+                </div>
+            </div>
+            
+        {% elif active_tab == 'Guardado' %}
+            <!-- GUARDADO -->
+            <h2>❤️ Productos Guardados</h2>
+            <hr>
+            <div class="info-alert">
+                <p class="info-alert-text">Aquí aparecerán los productos que hayas marcado como favoritos.</p>
+                <p class="info-alert-text" style="margin-top: 10px; color: var(--text-muted);">Actualmente no tienes productos guardados.</p>
+            </div>
+            
+        {% elif active_tab == 'Cuotas' %}
+            <!-- CUOTAS -->
+            <h2>💳 Cuotas</h2>
+            <hr>
+            <div class="info-alert">
+                <p class="info-alert-text">Sistema de cuotas sin interés y planes de pago.</p>
+                <p class="info-alert-text" style="margin-top: 10px; color: var(--text-muted);">Actualmente no tienes cuotas activas.</p>
+            </div>
+            
+        {% elif active_tab == 'Suscripciones' %}
+            <!-- SUSCRIPCIONES -->
+            <h2>📱 Suscripciones</h2>
+            <hr>
+            <div class="info-alert">
+                <p class="info-alert-text">Gestiona tus suscripciones y membresías.</p>
+                <p class="info-alert-text" style="margin-top: 10px; color: var(--text-muted);">Actualmente no tienes suscripciones activas.</p>
+            </div>
+            
+        {% elif active_tab == 'Historial' %}
+            <!-- HISTORIAL -->
+            <h2>📋 Historial de Pedidos</h2>
+            <hr>
+            <div class="info-alert">
+                <p class="info-alert-text">Aquí aparecerán tus compras anteriores.</p>
+                <p class="info-alert-text" style="margin-top: 10px; color: var(--text-muted);">Actualmente no tienes pedidos registrados.</p>
+            </div>
+            
+        {% elif active_tab == 'PagarRapido' %}
+            <!-- ADD PHONE -->
+            <h2>⚡ Paga Más Rápido</h2>
+            <hr>
+            <p style="margin-bottom: 20px; font-size: 14px;">Ingresa y verifica un número de teléfono para pagar más rápido en millones de tiendas.</p>
+            
+            <div class="dark-card" style="max-width: 500px; margin: 0 auto 30px auto;">
+                <div class="dark-card-icon">📱</div>
+                <h4 class="dark-card-title">Paga más rápido</h4>
+                <p class="dark-card-text">Ingresa y verifica un número de teléfono para pagar más rápido en millones de tiendas</p>
+            </div>
+            
+            <form action="{{ url_for('perfil_add_phone') }}" method="POST" style="max-width: 500px; margin: 0 auto;">
+                <div class="form-group">
+                    <label for="phone" class="form-label">Número de Teléfono</label>
+                    <input type="tel" id="phone" name="phone" class="form-control" placeholder="Ingresa tu número de teléfono" required>
+                </div>
+                <button type="submit" class="submit-btn">Agregar teléfono</button>
+            </form>
+            
+        {% elif active_tab == 'Configuracion' %}
+            <!-- CONFIGURACION -->
+            <h2>⚙️ Configuración</h2>
+            <hr>
+            
+            <h3 style="margin: 20px 0 10px 0;">Cuenta</h3>
+            <button class="buy-btn" onclick="alert('Funcionalidad de editar información en desarrollo.');" style="margin-bottom: 20px;">✏️ Editar Información</button>
+            
+            <h3>Seguridad</h3>
+            <div class="expander-panel">
+                <div class="expander-header" onclick="document.getElementById('pass-expander-body').style.display = document.getElementById('pass-expander-body').style.display === 'block' ? 'none' : 'block';">
+                    <span>🔐 Cambiar Contraseña</span>
+                    <span>▼</span>
+                </div>
+                <div class="expander-body" id="pass-expander-body" style="display: none;">
+                    <form action="{{ url_for('perfil_change_password') }}" method="POST">
+                        <div class="form-group">
+                            <label for="current_pwd" class="form-label">Contraseña Actual</label>
+                            <input type="password" id="current_pwd" name="current_pwd" class="form-control" required autocomplete="current-password">
+                        </div>
+                        <div class="form-group">
+                            <label for="new_pwd" class="form-label">Nueva Contraseña</label>
+                            <input type="password" id="new_pwd" name="new_pwd" class="form-control" required autocomplete="new-password">
+                        </div>
+                        <div class="form-group">
+                            <label for="confirm_pwd" class="form-label">Confirmar Contraseña</label>
+                            <input type="password" id="confirm_pwd" name="confirm_pwd" class="form-control" required autocomplete="new-password">
+                        </div>
+                        <button type="submit" class="submit-btn">Cambiar Contraseña</button>
+                    </form>
+                </div>
+            </div>
+            
+            <h3 style="margin-top: 20px;">Sesión</h3>
+            <button class="buy-btn" onclick="location.href='/logout'" style="margin-top: 10px; border-color: #dc3545; color: #dc3545; background-color: transparent;">🚪 Cerrar Sesión</button>
+            
+        {% elif active_tab == 'Ayuda' %}
+            <!-- AYUDA -->
+            <h2>❓ Ayuda y Soporte</h2>
+            <hr>
+            <p style="margin-bottom: 20px; font-weight: bold;">Preguntas Frecuentes</p>
+            
+            <div class="expander-panel">
+                <div class="expander-header" onclick="toggleFAQ(1)">
+                    <span>¿Cómo cambio mi información personal?</span>
+                    <span>▼</span>
+                </div>
+                <div class="expander-body" id="faq-1" style="display: none;">
+                    Ve a Configuración > Editar Información para actualizar tus datos.
+                </div>
+            </div>
+            
+            <div class="expander-panel">
+                <div class="expander-header" onclick="toggleFAQ(2)">
+                    <span>¿Cómo agrego un número de teléfono?</span>
+                    <span>▼</span>
+                </div>
+                <div class="expander-body" id="faq-2" style="display: none;">
+                    Ve a Paga más rápido e ingresa tu número de teléfono verificado.
+                </div>
+            </div>
+            
+            <div class="expander-panel">
+                <div class="expander-header" onclick="toggleFAQ(3)">
+                    <span>¿Cómo cierro mi sesión?</span>
+                    <span>▼</span>
+                </div>
+                <div class="expander-body" id="faq-3" style="display: none;">
+                    Ve a Configuración > Sesión y haz clic en Cerrar Sesión.
+                </div>
+            </div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function toggleFAQ(id) {
+        const body = document.getElementById('faq-' + id);
+        body.style.display = body.style.display === 'block' ? 'none' : 'block';
+    }
+</script>
+{% endblock %}

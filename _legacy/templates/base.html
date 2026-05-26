@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es" {% if not session.get('light_mode', True) %}data-theme="dark"{% endif %}>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Voik{% endblock %}</title>
+    <!-- Google Fonts Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/voik.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="voik-header">
+        <div class="app-container header-row">
+            <!-- LOGO -->
+            <div class="logo-container">
+                <a href="/" class="logo-link">
+                    <!-- Siempre usamos el logo negro; el CSS lo invierte en modo oscuro con transición -->
+                    <img src="{{ url_for('static', filename='imagenes/vk_black.png') }}" alt="VOIK Logo" class="logo-img" id="logo-img-el">
+                    <span class="logo-brand-text">VOIK</span>
+                </a>
+            </div>
+
+            <!-- NAVIGATION -->
+            <nav class="main-nav">
+                <ul class="nav-links">
+                    <li><a href="/" class="nav-item-link {% if request.path == '/' or request.path == '/galeria' %}active{% endif %}">Galería</a></li>
+                    <li><a href="/nuevo" class="nav-item-link {% if request.path == '/nuevo' %}active{% endif %}">Nuevo</a></li>
+                    <li><a href="/tendencias" class="nav-item-link {% if request.path == '/tendencias' %}active{% endif %}">Tendencias</a></li>
+                </ul>
+            </nav>
+
+            <!-- THEME TOGGLE -->
+            <div class="theme-toggle-container">
+                <div class="switch-container" id="theme-switch-btn">
+                    <span>Claro</span>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-checkbox" {% if session.get('light_mode', True) %}checked{% endif %}>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- USER MENU -->
+            <div class="user-menu-container">
+                <button class="user-popover-trigger" id="user-popover-btn">
+                    👤 Cuenta
+                </button>
+                <div class="popover-menu" id="user-popover-menu">
+                    <div class="popover-header">Menú</div>
+                    {% if session.get('user_id') %}
+                        <button class="popover-item" onclick="location.href='/perfil'">Mi Perfil</button>
+                        <button class="popover-item" onclick="location.href='/carrito'">Mi Carrito</button>
+                        <button class="popover-item" onclick="location.href='/ajustes'">Ajustes</button>
+                        {% if session.get('user_role') == 'admin' %}
+                            <button class="popover-item" onclick="location.href='/admin'">Panel Admin</button>
+                        {% endif %}
+                        <button class="popover-item" onclick="location.href='/logout'">Cerrar Sesión</button>
+                    {% else %}
+                        <button class="popover-item" onclick="location.href='/login'">Iniciar Sesión</button>
+                        <button class="popover-item" onclick="location.href='/registro'">Registrarse</button>
+                        <button class="popover-item" onclick="location.href='/carrito'">Mi Carrito</button>
+                        <button class="popover-item" onclick="location.href='/ajustes'">Ajustes</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTENT -->
+    <main class="app-container">
+        <!-- FLASH MESSAGES -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message flash-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="voik-footer">
+        <div class="app-container">
+            <p class="footer-text">© 2026 VOIK. ESTUDIO DE DISEÑO MONOCROMÁTICO.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // User Popover Toggle
+        const popoverBtn = document.getElementById('user-popover-btn');
+        const popoverMenu = document.getElementById('user-popover-menu');
+        
+        popoverBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            popoverMenu.classList.toggle('show');
+        });
+        
+        document.addEventListener('click', () => {
+            popoverMenu.classList.remove('show');
+        });
+        
+        popoverMenu.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+
+        // Theme Toggle Logic
+        const themeCheckbox = document.getElementById('theme-checkbox');
+        themeCheckbox.addEventListener('change', () => {
+            const isLight = themeCheckbox.checked;
+            if (isLight) {
+                document.documentElement.removeAttribute('data-theme');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+            
+            // Sync con la sesión del servidor en background (sin recargar)
+            fetch('/toggle-theme', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
