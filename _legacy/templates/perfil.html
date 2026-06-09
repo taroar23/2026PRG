@@ -19,37 +19,37 @@
         {% set active_tab = request.args.get('tab', 'Inicio') %}
         
         <button class="profile-menu-item {% if active_tab == 'Inicio' %}active{% endif %}" onclick="location.href='/perfil?tab=Inicio'">
-            <img src="{{ url_for('static', filename='imagenes/user.svg.svg') }}" style="width: 18px; height: 18px;">
+            <img src="{{ url_for('static', filename='imagenes/' ~ ('userwhite.svg.svg' if not session.get('light_mode', True) else 'user.svg.svg')) }}" data-icon-base="user" style="width: 18px; height: 18px;">
             <span>Mi Cuenta</span>
         </button>
         
         <button class="profile-menu-item {% if active_tab == 'Guardado' %}active{% endif %}" onclick="location.href='/perfil?tab=Guardado'">
-            <img src="{{ url_for('static', filename='imagenes/heart.svg.svg') }}" style="width: 18px; height: 18px;">
+            <img src="{{ url_for('static', filename='imagenes/' ~ ('heartwhite.svg.svg' if not session.get('light_mode', True) else 'heart.svg.svg')) }}" data-icon-base="heart" style="width: 18px; height: 18px;">
             <span>Guardado</span>
         </button>
         
         <button class="profile-menu-item {% if active_tab == 'Cuotas' %}active{% endif %}" onclick="location.href='/perfil?tab=Cuotas'">
-            <img src="{{ url_for('static', filename='imagenes/banknote.svg.svg') }}" style="width: 18px; height: 18px;">
+            <img src="{{ url_for('static', filename='imagenes/' ~ ('banknotewhite.svg.svg' if not session.get('light_mode', True) else 'banknote.svg.svg')) }}" data-icon-base="banknote" style="width: 18px; height: 18px;">
             <span>Cuotas</span>
         </button>
         
         <button class="profile-menu-item {% if active_tab == 'Suscripciones' %}active{% endif %}" onclick="location.href='/perfil?tab=Suscripciones'">
-            <img src="{{ url_for('static', filename='imagenes/credit-card.svg.svg') }}" style="width: 18px; height: 18px;">
+            <img src="{{ url_for('static', filename='imagenes/' ~ ('credit-cardwhite.svg.svg' if not session.get('light_mode', True) else 'credit-card.svg.svg')) }}" data-icon-base="credit-card" style="width: 18px; height: 18px;">
             <span>Suscripciones</span>
         </button>
         
         <button class="profile-menu-item {% if active_tab == 'Historial' %}active{% endif %}" onclick="location.href='/perfil?tab=Historial'">
-            <img src="{{ url_for('static', filename='imagenes/clipboard-list.svg.svg') }}" style="width: 18px; height: 18px;">
+            <img src="{{ url_for('static', filename='imagenes/' ~ ('clipboard-listwhite.svg.svg' if not session.get('light_mode', True) else 'clipboard-list.svg.svg')) }}" data-icon-base="clipboard-list" style="width: 18px; height: 18px;">
             <span>Historial de pedidos</span>
         </button>
         
         <button class="profile-menu-item {% if active_tab == 'Configuracion' %}active{% endif %}" onclick="location.href='/perfil?tab=Configuracion'">
-            <img src="{{ url_for('static', filename='imagenes/settings.svg.svg') }}" style="width: 18px; height: 18px;">
+            <img src="{{ url_for('static', filename='imagenes/' ~ ('settingswhite.svg.svg' if not session.get('light_mode', True) else 'settings.svg.svg')) }}" data-icon-base="settings" style="width: 18px; height: 18px;">
             <span>Configuración</span>
         </button>
         
         <button class="profile-menu-item {% if active_tab == 'Ayuda' %}active{% endif %}" onclick="location.href='/perfil?tab=Ayuda'">
-            <img src="{{ url_for('static', filename='imagenes/circle-question-mark.svg.svg') }}" style="width: 18px; height: 18px;">
+            <img src="{{ url_for('static', filename='imagenes/' ~ ('circle-question-markwhite.svg.svg' if not session.get('light_mode', True) else 'circle-question-mark.svg.svg')) }}" data-icon-base="circle-question-mark" style="width: 18px; height: 18px;">
             <span>Ayuda</span>
         </button>
     </aside>
@@ -60,7 +60,7 @@
             
             <div class="dark-card">
                 <div class="dark-card-icon">
-                    <img src="{{ url_for('static', filename='imagenes/credit-card' + ('white' if not session.get('light_mode', True) else '') + '.svg.svg') }}" style="width: 60px; height: 60px;">
+                    <img src="{{ url_for('static', filename='imagenes/credit-card' + ('white' if not session.get('light_mode', True) else '') + '.svg.svg') }}" data-icon-base="credit-card" style="width: 60px; height: 60px;">
                 </div>
                 <h3 class="dark-card-title">Paga más rápido</h3>
                 <p class="dark-card-text">Ingresa y verifica un número de teléfono para pagar más rápido en millones de tiendas</p>
@@ -70,7 +70,7 @@
             <div class="quick-cards">
                 <div class="dark-card" onclick="location.href='/perfil?tab=Guardado'" style="cursor: pointer; margin-bottom: 0;">
                     <div class="dark-card-icon">
-                        <img src="{{ url_for('static', filename='imagenes/heart' + ('white' if not session.get('light_mode', True) else '') + '.svg.svg') }}" style="width: 50px; height: 50px;">
+                        <img src="{{ url_for('static', filename='imagenes/heart' + ('white' if not session.get('light_mode', True) else '') + '.svg.svg') }}" data-icon-base="heart" style="width: 50px; height: 50px;">
                     </div>
                     <h4 class="dark-card-title">Guardado</h4>
                     <button class="buy-btn" style="margin-top: 15px;">Ver guardados</button>
@@ -78,7 +78,7 @@
                 
                 <div class="dark-card" style="margin-bottom: 0;">
                     <div class="dark-card-icon">
-                        <img src="{{ url_for('static', filename='imagenes/van' + ('white' if not session.get('light_mode', True) else '') + '.svg.svg') }}" style="width: 50px; height: 50px;">
+                        <img src="{{ url_for('static', filename='imagenes/van' + ('white' if not session.get('light_mode', True) else '') + '.svg.svg') }}" data-icon-base="van" style="width: 50px; height: 50px;">
                     </div>
                     <h4 class="dark-card-title">Envíos</h4>
                     <p class="dark-card-text" style="font-size: 11px; margin-top: 10px;">Sin envíos pendientes</p>
@@ -87,7 +87,7 @@
             
         {% elif active_tab == 'Guardado' %}
             
-            <h2>❤️ Productos Guardados</h2>
+            <h2><img src="{{ url_for('static', filename='imagenes/' ~ ('heartwhite.svg.svg' if not session.get('light_mode', True) else 'heart.svg.svg')) }}" alt="Guardado" data-icon-base="heart" style="width:20px; height:20px; vertical-align:middle; margin-right:6px;">Productos Guardados</h2>
             <hr>
             <div class="info-alert">
                 <p class="info-alert-text">Aquí aparecerán los productos que hayas marcado como favoritos.</p>
@@ -96,7 +96,7 @@
             
         {% elif active_tab == 'Cuotas' %}
             
-            <h2>💳 Cuotas</h2>
+            <h2><img src="{{ url_for('static', filename='imagenes/' ~ ('credit-cardwhite.svg.svg' if not session.get('light_mode', True) else 'credit-card.svg.svg')) }}" alt="Cuotas" data-icon-base="credit-card" style="width:20px; height:20px; vertical-align:middle; margin-right:6px;">Cuotas</h2>
             <hr>
             <div class="info-alert">
                 <p class="info-alert-text">Sistema de cuotas sin interés y planes de pago.</p>
@@ -105,7 +105,7 @@
             
         {% elif active_tab == 'Suscripciones' %}
             
-            <h2>📱 Suscripciones</h2>
+            <h2>Suscripciones</h2>
             <hr>
             <div class="info-alert">
                 <p class="info-alert-text">Gestiona tus suscripciones y membresías.</p>
@@ -114,7 +114,7 @@
             
         {% elif active_tab == 'Historial' %}
             
-            <h2>📋 Historial de Pedidos</h2>
+            <h2><img src="{{ url_for('static', filename='imagenes/' ~ ('clipboard-listwhite.svg.svg' if not session.get('light_mode', True) else 'clipboard-list.svg.svg')) }}" alt="Historial" data-icon-base="clipboard-list" style="width:20px; height:20px; vertical-align:middle; margin-right:6px;">Historial de Pedidos</h2>
             <hr>
             <div class="info-alert">
                 <p class="info-alert-text">Aquí aparecerán tus compras anteriores.</p>
@@ -123,12 +123,12 @@
             
         {% elif active_tab == 'PagarRapido' %}
             
-            <h2>⚡ Paga Más Rápido</h2>
+            <h2>Paga Más Rápido</h2>
             <hr>
             <p style="margin-bottom: 20px; font-size: 14px;">Ingresa y verifica un número de teléfono para pagar más rápido en millones de tiendas.</p>
             
             <div class="dark-card" style="max-width: 500px; margin: 0 auto 30px auto;">
-                <div class="dark-card-icon">📱</div>
+                <div class="dark-card-icon"></div>
                 <h4 class="dark-card-title">Paga más rápido</h4>
                 <p class="dark-card-text">Ingresa y verifica un número de teléfono para pagar más rápido en millones de tiendas</p>
             </div>
@@ -143,16 +143,16 @@
             
         {% elif active_tab == 'Configuracion' %}
             
-            <h2>⚙️ Configuración</h2>
+            <h2><img src="{{ url_for('static', filename='imagenes/' ~ ('settingswhite.svg.svg' if not session.get('light_mode', True) else 'settings.svg.svg')) }}" alt="Configuración" data-icon-base="settings" style="width:20px; height:20px; vertical-align:middle; margin-right:6px;">Configuración</h2>
             <hr>
             
             <h3 style="margin: 20px 0 10px 0;">Cuenta</h3>
-            <button class="buy-btn" onclick="alert('Funcionalidad de editar información en desarrollo.');" style="margin-bottom: 20px;">✏️ Editar Información</button>
+            <button class="buy-btn" onclick="alert('Funcionalidad de editar información en desarrollo.');" style="margin-bottom: 20px;"><img src="{{ url_for('static', filename='imagenes/' ~ ('user-penwhite.svg.svg' if not session.get('light_mode', True) else 'user-pen.svg.svg')) }}" alt="Editar" data-icon-base="user-pen" style="width:16px; height:16px; vertical-align:middle; margin-right:6px;">Editar Información</button>
             
             <h3>Seguridad</h3>
             <div class="expander-panel">
                 <div class="expander-header" onclick="document.getElementById('pass-expander-body').style.display = document.getElementById('pass-expander-body').style.display === 'block' ? 'none' : 'block';">
-                    <span>🔐 Cambiar Contraseña</span>
+                    <span>Cambiar Contraseña</span>
                     <span>▼</span>
                 </div>
                 <div class="expander-body" id="pass-expander-body" style="display: none;">
@@ -175,11 +175,11 @@
             </div>
             
             <h3 style="margin-top: 20px;">Sesión</h3>
-            <button class="buy-btn" onclick="location.href='/logout'" style="margin-top: 10px; border-color: #dc3545; color: #dc3545; background-color: transparent;">🚪 Cerrar Sesión</button>
+            <button class="buy-btn" onclick="location.href='/logout'" style="margin-top: 10px; border-color: #dc3545; color: #dc3545; background-color: transparent;">Cerrar Sesión</button>
             
         {% elif active_tab == 'Ayuda' %}
             
-            <h2>❓ Ayuda y Soporte</h2>
+            <h2><img src="{{ url_for('static', filename='imagenes/' ~ ('circle-question-markwhite.svg.svg' if not session.get('light_mode', True) else 'circle-question-mark.svg.svg')) }}" alt="Ayuda" data-icon-base="circle-question-mark" style="width:20px; height:20px; vertical-align:middle; margin-right:6px;">Ayuda y Soporte</h2>
             <hr>
             <p style="margin-bottom: 20px; font-weight: bold;">Preguntas Frecuentes</p>
             

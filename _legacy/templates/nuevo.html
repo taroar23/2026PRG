@@ -15,7 +15,7 @@
         {% for prod in productos %}
             <div class="product-card">
                 <div class="product-img-wrapper">
-                    <img src="https://plus.unsplash.com/premium_photo-1681228229983-690a29f9bcfe?q=80&w=2070&auto=format&fit=crop" alt="{{ prod.nombre }}" class="product-card-img">
+                    <img src="{{ url_for('static', filename='imagenes/' ~ prod.imagen) }}" alt="{{ prod.nombre }}" class="product-card-img">
                 </div>
                 <div class="product-info-row">
                     <div class="product-details">
@@ -27,7 +27,7 @@
                     </div>
                 </div>
                 <form action="{{ url_for('comprar_producto', product_id=prod.id) }}" method="POST">
-                    <button type="submit" class="buy-btn">🛒 Ordenar</button>
+                    <button type="submit" class="buy-btn"><img src="{{ url_for('static', filename='imagenes/' ~ ('shopping-cartwhite.svg.svg' if not session.get('light_mode', True) else 'shopping-cart.svg.svg')) }}" alt="Ordenar" data-icon-base="shopping-cart" style="width:16px; height:16px; vertical-align:middle; margin-right:6px;">Ordenar</button>
                 </form>
             </div>
         {% endfor %}

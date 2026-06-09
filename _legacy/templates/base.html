@@ -21,7 +21,7 @@
             <div class="logo-container">
                 <a href="/" class="logo-link">
                     
-                    <img src="{{ url_for('static', filename='imagenes/vk_black.png') }}" alt="VOIK Logo" class="logo-img" id="logo-img-el">
+                    <img src="{{ url_for('static', filename='imagenes/' ~ ('vk_white.png' if not session.get('light_mode', True) else 'vk_black.png')) }}" alt="VOIK Logo" class="logo-img" id="logo-img-el">
                     <span class="logo-brand-text">VOIK</span>
                 </a>
             </div>
@@ -49,7 +49,7 @@
             
             <div class="user-menu-container">
                 <button class="user-popover-trigger" id="user-popover-btn">
-                    👤 Cuenta
+                    <img src="{{ url_for('static', filename='imagenes/' ~ ('userwhite.svg.svg' if not session.get('light_mode', True) else 'user.svg.svg')) }}" alt="Cuenta" data-icon-base="user" style="width:18px; height:18px; vertical-align:middle; margin-right:6px;"> Cuenta
                 </button>
                 <div class="popover-menu" id="user-popover-menu">
                     <div class="popover-header">Menú</div>
@@ -91,12 +91,28 @@
     
     <footer class="voik-footer">
         <div class="app-container">
-            <p class="footer-text">© 2026 VOIK. ESTUDIO DE DISEÑO MONOCROMÁTICO.</p>
+            <p class="footer-text">© 2026 Voik Derechos Reservados.</p>
         </div>
     </footer>
 
     
     <script>
+        // Helper function to update all theme-aware icons with smooth transition
+        function updateThemeIcons(isLight) {
+            const icons = document.querySelectorAll('[data-icon-base]');
+            icons.forEach(icon => {
+                const baseName = icon.getAttribute('data-icon-base');
+                const suffix = isLight ? '.svg.svg' : 'white.svg.svg';
+                const newSrc = `/static/imagenes/${baseName}${suffix}`;
+                
+                icon.style.opacity = '0';
+                setTimeout(() => {
+                    icon.src = newSrc;
+                    icon.style.opacity = '1';
+                }, 150);
+            });
+        }
+
         // User Popover Toggle
         const popoverBtn = document.getElementById('user-popover-btn');
         const popoverMenu = document.getElementById('user-popover-menu');
@@ -116,13 +132,26 @@
 
         // Theme Toggle Logic
         const themeCheckbox = document.getElementById('theme-checkbox');
+        const logoImg = document.getElementById('logo-img-el');
+        
         themeCheckbox.addEventListener('change', () => {
             const isLight = themeCheckbox.checked;
-            if (isLight) {
-                document.documentElement.removeAttribute('data-theme');
-            } else {
-                document.documentElement.setAttribute('data-theme', 'dark');
-            }
+            
+            // Smooth logo transition
+            logoImg.style.opacity = '0';
+            setTimeout(() => {
+                if (isLight) {
+                    document.documentElement.removeAttribute('data-theme');
+                    logoImg.src = logoImg.src.replace('vk_white.png', 'vk_black.png');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    logoImg.src = logoImg.src.replace('vk_black.png', 'vk_white.png');
+                }
+                logoImg.style.opacity = '1';
+            }, 150);
+            
+            // Update all theme-aware icons
+            updateThemeIcons(isLight);
             
             // Sync con la sesión del servidor en background (sin recargar)
             fetch('/toggle-theme', {
@@ -130,6 +159,10 @@
                 headers: { 'Content-Type': 'application/json' }
             });
         });
+        
+        // Initialize icons on page load
+        const initialLight = document.documentElement.getAttribute('data-theme') !== 'dark';
+        updateThemeIcons(initialLight);
     </script>
     {% block extra_js %}{% endblock %}
 </body>

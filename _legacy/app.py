@@ -13,6 +13,51 @@ app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'voik_monochrome_premium_secret_key_2026')
 
 
+def find_image_for_name(name):
+    images_dir = os.path.join(base_dir, 'static', 'imagenes')
+    try:
+        files = os.listdir(images_dir)
+    except Exception:
+        return 'image.svg.svg'
+
+    def norm(s):
+        return s.replace('"', '').replace("'", '').strip()
+
+    name_clean = norm(name)
+
+    # Exact name matches (case-insensitive)
+    for f in files:
+        if f.lower() == (name_clean + '.jpg').lower() or f.lower() == (name_clean + '.png').lower():
+            return f
+
+    # Try variations: spaces -> underscores, lowercase
+    variants = [
+        name_clean,
+        name_clean.replace(' ', '_'),
+        name_clean.lower(),
+        name_clean.replace(' ', '_').lower()
+    ]
+    for v in variants:
+        for f in files:
+            if f.lower() == (v + '.jpg').lower() or f.lower() == (v + '.png').lower():
+                return f
+
+    # Partial match: pick file with most matching words
+    name_words = [w.lower() for w in name_clean.split() if len(w) > 1]
+    best = (None, 0)
+    for f in files:
+        fl = f.lower()
+        score = sum(1 for w in name_words if w in fl)
+        if score > best[1]:
+            best = (f, score)
+
+    if best[0] and best[1] > 0:
+        return best[0]
+
+    # Fallback
+    return 'image.svg.svg'
+
+
 
 
 
@@ -33,7 +78,11 @@ def init_session():
 def galeria():
     db = SessionLocal()
     try:
-        productos = db.query(Producto).all()
+        productos_raw = db.query(Producto).all()
+        productos = []
+        for p in productos_raw:
+            img = find_image_for_name(p.nombre)
+            productos.append({'id': p.id, 'nombre': p.nombre, 'precio': p.precio, 'imagen': img})
         return render_template('galeria.html', productos=productos)
     finally:
         db.close()
@@ -42,9 +91,13 @@ def galeria():
 def nuevo():
     db = SessionLocal()
     try:
-        productos = db.query(Producto).all()
-        
-        nuevos = reversed(productos[-3:]) if len(productos) > 0 else []
+        productos_raw = db.query(Producto).all()
+        productos = []
+        for p in productos_raw:
+            img = find_image_for_name(p.nombre)
+            productos.append({'id': p.id, 'nombre': p.nombre, 'precio': p.precio, 'imagen': img})
+
+        nuevos = list(reversed(productos[-3:])) if len(productos) > 0 else []
         return render_template('nuevo.html', productos=nuevos)
     finally:
         db.close()
@@ -228,7 +281,7 @@ def perfil_add_phone():
     phone = request.form.get('phone')
     if phone:
         
-        flash('✅ Teléfono agregado correctamente.', 'success')
+        flash('Teléfono agregado correctamente.', 'success')
     else:
         flash('Por favor ingresa un número de teléfono válido.', 'warning')
         
@@ -250,22 +303,22 @@ def perfil_change_password():
             return redirect(url_for('login'))
         
         if not verify_password(user.clave, current_pwd):
-            flash('❌ Contraseña actual incorrecta.', 'danger')
+            flash('Contraseña actual incorrecta.', 'danger')
             return redirect(url_for('perfil', tab='Configuracion'))
         
         if new_pwd != confirm_pwd:
-            flash('❌ Las contraseñas no coinciden.', 'danger')
+            flash('Las contraseñas no coinciden.', 'danger')
             return redirect(url_for('perfil', tab='Configuracion'))
             
         if len(new_pwd) < 6:
-            flash('❌ La contraseña debe tener al menos 6 caracteres.', 'danger')
+            flash('La contraseña debe tener al menos 6 caracteres.', 'danger')
             return redirect(url_for('perfil', tab='Configuracion'))
             
         user.clave = hash_password(new_pwd)
         db.commit()
         
         session.clear()
-        flash('✅ Contraseña actualizada correctamente. Inicia sesión de nuevo.', 'success')
+        flash('Contraseña actualizada correctamente. Inicia sesión de nuevo.', 'success')
         return redirect(url_for('login'))
     finally:
         db.close()

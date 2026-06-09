@@ -32,8 +32,7 @@
             {% for prod in productos %}
                 <div class="product-card">
                     <div class="product-img-wrapper">
-                        
-                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&auto=format&fit=crop" alt="{{ prod.nombre }}" class="product-card-img">
+                        <img src="{{ url_for('static', filename='imagenes/' ~ prod.imagen) }}" alt="{{ prod.nombre }}" class="product-card-img">
                     </div>
                     <div class="product-info-row">
                         <div class="product-details">
@@ -45,7 +44,7 @@
                         </div>
                     </div>
                     <form action="{{ url_for('comprar_producto', product_id=prod.id) }}" method="POST">
-                        <button type="submit" class="buy-btn">🛒 Comprar</button>
+                        <button type="submit" class="buy-btn"><img src="{{ url_for('static', filename='imagenes/' ~ ('shopping-cartwhite.svg.svg' if not session.get('light_mode', True) else 'shopping-cart.svg.svg')) }}" alt="Comprar" data-icon-base="shopping-cart" style="width:16px; height:16px; vertical-align:middle; margin-right:6px;">Comprar</button>
                     </form>
                 </div>
             {% endfor %}

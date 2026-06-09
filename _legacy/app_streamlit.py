@@ -5,13 +5,20 @@ from auth import hash_password, verify_password
 import time
 
 
-st.set_page_config(page_title="Voik", page_icon="🛍️", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="Voik", page_icon="", layout="wide", initial_sidebar_state="expanded")
 
 
 import os
 from pathlib import Path
 base_dir = os.path.abspath(os.path.dirname(__file__))
-logo_path = os.path.join(base_dir, "logo.png")
+
+# Initialize light_mode session state
+if 'light_mode' not in st.session_state:
+    st.session_state.light_mode = True
+
+# Load logo based on theme mode
+logo_filename = 'vk_black.png' if st.session_state.light_mode else 'vk_white.png'
+logo_path = os.path.join(base_dir, 'static', 'imagenes', logo_filename)
 if os.path.exists(logo_path):
     st.image(logo_path, width=90)
 
@@ -839,41 +846,41 @@ elif view_to_show == "Perfil":
             
             
             elif st.session_state.profile_menu == "Guardado":
-                st.markdown("## ❤️ Productos Guardados")
+                st.markdown("## Productos Guardados")
                 st.markdown("---")
                 st.info("Aquí aparecerán los productos que hayas marcado como favoritos.")
                 st.markdown("Actualmente no tienes productos guardados.")
             
             
             elif st.session_state.profile_menu == "Cuotas":
-                st.markdown("## 💳 Cuotas")
+                st.markdown("## Cuotas")
                 st.markdown("---")
                 st.info("Sistema de cuotas sin interés y planes de pago.")
                 st.markdown("Actualmente no tienes cuotas activas.")
             
             
             elif st.session_state.profile_menu == "Suscripciones":
-                st.markdown("## 📱 Suscripciones")
+                st.markdown("## Suscripciones")
                 st.markdown("---")
                 st.info("Gestiona tus suscripciones y membresías.")
                 st.markdown("Actualmente no tienes suscripciones activas.")
             
             
             elif st.session_state.profile_menu == "Historial":
-                st.markdown("## 📋 Historial de Pedidos")
+                st.markdown("## Historial de Pedidos")
                 st.markdown("---")
                 st.info("Aquí aparecerán tus compras anteriores.")
                 st.markdown("Actualmente no tienes pedidos registrados.")
             
             
             elif st.session_state.profile_menu == "PagarRapido":
-                st.markdown("## ⚡ Paga Más Rápido")
+                st.markdown("## Paga Más Rápido")
                 st.markdown("---")
                 st.markdown("Ingresa y verifica un número de teléfono para pagar más rápido en millones de tiendas.")
                 
                 st.markdown("""
                 <div class='dark-card' style='background-color: #1a1b1e; padding: 30px; border-radius: 8px; text-align: center; margin: 20px 0;'>
-                    <div style='font-size: 40px; margin-bottom: 15px;'>📱</div>
+                    <div style='font-size: 40px; margin-bottom: 15px;'></div>
                     <p style='margin: 10px 0; font-size: 16px; font-weight: 600;'>Paga más rápido</p>
                     <p class='subtext' style='margin: 10px 0; font-size: 13px;'>Ingresa y verifica un número de teléfono para pagar más rápido en millones de tiendas</p>
                 </div>
@@ -881,21 +888,20 @@ elif view_to_show == "Perfil":
                 
                 phone = st.text_input("Número de Teléfono", placeholder="Ingresa tu número de teléfono")
                 if st.button("Agregar teléfono", type="primary", use_container_width=True):
-                    st.success("✅ Teléfono agregado correctamente.")
-            
+                    st.success("Teléfono agregado correctamente.")
             
             elif st.session_state.profile_menu == "Configuracion":
-                st.markdown("## ⚙️ Configuración")
+                st.markdown("## Configuración")
                 st.markdown("---")
                 
                 st.subheader("Cuenta")
-                if st.button("✏️ Editar Información", use_container_width=True):
+                if st.button("Editar Información", use_container_width=True):
                     st.session_state.edit_profile = True
                     st.rerun()
                 
                 st.markdown("<br>", unsafe_allow_html=True)
                 st.subheader("Seguridad")
-                with st.expander("🔐 Cambiar Contraseña"):
+                with st.expander("Cambiar Contraseña"):
                     with st.form("change_password_form"):
                         current_pwd = st.text_input("Contraseña Actual", type="password", key="current_pwd_perfil")
                         new_pwd = st.text_input("Nueva Contraseña", type="password", key="new_pwd_perfil")
@@ -903,29 +909,29 @@ elif view_to_show == "Perfil":
                         
                         if st.form_submit_button("Cambiar Contraseña", type="primary", use_container_width=True):
                             if not verify_password(user.clave, current_pwd):
-                                st.error("❌ Contraseña actual incorrecta.")
+                                st.error("Contraseña actual incorrecta.")
                             elif new_pwd != confirm_pwd:
-                                st.error("❌ Las contraseñas no coinciden.")
+                                st.error("Las contraseñas no coinciden.")
                             elif len(new_pwd) < 6:
-                                st.error("❌ La contraseña debe tener al menos 6 caracteres.")
+                                st.error("La contraseña debe tener al menos 6 caracteres.")
                             else:
                                 user.clave = hash_password(new_pwd)
                                 db.commit()
-                                st.success("✅ Contraseña actualizada.")
+                                st.success("Contraseña actualizada.")
                                 time.sleep(2)
                                 logout_user()
                                 st.rerun()
                 
                 st.markdown("<br>", unsafe_allow_html=True)
                 st.subheader("Sesión")
-                if st.button("🚪 Cerrar Sesión", type="secondary", use_container_width=True):
+                if st.button("Cerrar Sesión", type="secondary", use_container_width=True):
                     logout_user()
-                    st.success("✅ Sesión cerrada.")
+                    st.success("Sesión cerrada.")
                     st.rerun()
             
             
             elif st.session_state.profile_menu == "Ayuda":
-                st.markdown("## ❓ Ayuda y Soporte")
+                st.markdown("## Ayuda y Soporte")
                 st.markdown("---")
                 st.markdown("**Preguntas Frecuentes**")
                 with st.expander("¿Cómo cambio mi información personal?"):
@@ -940,7 +946,7 @@ elif view_to_show == "Perfil":
 elif view_to_show == "Ajustes":
     st.markdown("""
         <div style='padding-top: 40px; padding-bottom: 20px; border-bottom: 1px solid #2a2c30;'>
-            <h1 style="font-size: 40px; font-weight: 300; margin-bottom: 0; color: #ffffff;">Ajustes ⚙️</h1>
+            <h1 style="font-size: 40px; font-weight: 300; margin-bottom: 0; color: #ffffff;">Ajustes</h1>
         </div>
         <br>
     """, unsafe_allow_html=True)
