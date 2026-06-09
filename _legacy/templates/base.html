@@ -4,29 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Voik{% endblock %}</title>
-    <!-- Google Fonts Inter -->
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- custom CSS -->
+    
     <link rel="stylesheet" href="{{ url_for('static', filename='css/voik.css') }}">
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <!-- HEADER -->
+    
     <header class="voik-header">
         <div class="app-container header-row">
-            <!-- LOGO -->
+            
             <div class="logo-container">
                 <a href="/" class="logo-link">
-                    <!-- Siempre usamos el logo negro; el CSS lo invierte en modo oscuro con transición -->
+                    
                     <img src="{{ url_for('static', filename='imagenes/vk_black.png') }}" alt="VOIK Logo" class="logo-img" id="logo-img-el">
                     <span class="logo-brand-text">VOIK</span>
                 </a>
             </div>
 
-            <!-- NAVIGATION -->
+            
             <nav class="main-nav">
                 <ul class="nav-links">
                     <li><a href="/" class="nav-item-link {% if request.path == '/' or request.path == '/galeria' %}active{% endif %}">Galería</a></li>
@@ -35,7 +35,7 @@
                 </ul>
             </nav>
 
-            <!-- THEME TOGGLE -->
+            
             <div class="theme-toggle-container">
                 <div class="switch-container" id="theme-switch-btn">
                     <span>Claro</span>
@@ -46,7 +46,7 @@
                 </div>
             </div>
 
-            <!-- USER MENU -->
+            
             <div class="user-menu-container">
                 <button class="user-popover-trigger" id="user-popover-btn">
                     👤 Cuenta
@@ -72,9 +72,9 @@
         </div>
     </header>
 
-    <!-- CONTENT -->
+    
     <main class="app-container">
-        <!-- FLASH MESSAGES -->
+        
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 <div class="flash-messages">
@@ -88,14 +88,14 @@
         {% block content %}{% endblock %}
     </main>
 
-    <!-- FOOTER -->
+    
     <footer class="voik-footer">
         <div class="app-container">
             <p class="footer-text">© 2026 VOIK. ESTUDIO DE DISEÑO MONOCROMÁTICO.</p>
         </div>
     </footer>
 
-    <!-- Scripts -->
+    
     <script>
         // User Popover Toggle
         const popoverBtn = document.getElementById('user-popover-btn');

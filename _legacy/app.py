@@ -5,19 +5,19 @@ from auth import hash_password, verify_password
 import os
 import sys
 
-# Ensure local directory is in path for imports
+
 base_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(base_dir)
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'voik_monochrome_premium_secret_key_2026')
 
-# Session keys:
-# - user_id: ID of the logged in user
-# - user_name: Name of the logged in user
-# - user_role: Role of the logged in user (admin/cliente)
-# - light_mode: True (Light) or False (Dark)
-# - cart: dict mapping product_id (str) to quantity (int)
+
+
+
+
+
+
 
 @app.before_request
 def init_session():
@@ -26,7 +26,7 @@ def init_session():
     if 'cart' not in session:
         session['cart'] = {}
 
-# --- VIEW ROUTES ---
+
 
 @app.route('/')
 @app.route('/galeria')
@@ -43,7 +43,7 @@ def nuevo():
     db = SessionLocal()
     try:
         productos = db.query(Producto).all()
-        # Reversing the last 3 products to match the Streamlit "recent launches" behavior
+        
         nuevos = reversed(productos[-3:]) if len(productos) > 0 else []
         return render_template('nuevo.html', productos=nuevos)
     finally:
@@ -96,7 +96,7 @@ def perfil():
     try:
         user = db.query(Usuario).filter(Usuario.id == session.get('user_id')).first()
         if not user:
-            # Session user not found in DB
+            
             session.clear()
             flash('Usuario no encontrado.', 'danger')
             return redirect(url_for('login'))
@@ -104,7 +104,7 @@ def perfil():
     finally:
         db.close()
 
-# --- AUTH ROUTES ---
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -118,7 +118,7 @@ def login():
         
         db = SessionLocal()
         try:
-            # Query by username or email
+            
             user = db.query(Usuario).filter(
                 (Usuario.nombre_usuario == username) | (Usuario.email == username)
             ).first()
@@ -127,7 +127,7 @@ def login():
                 session['user_id'] = user.id
                 session['user_name'] = user.nombre
                 session['user_role'] = user.rol
-                session['cart'] = {} # Initialize empty cart on login
+                session['cart'] = {} 
                 flash(f'¡Bienvenido {user.nombre}! Iniciaste sesión exitosamente.', 'success')
                 return redirect(url_for('galeria'))
             else:
@@ -152,7 +152,7 @@ def registro():
         
         db = SessionLocal()
         try:
-            # Check if user already exists
+            
             user_exist = db.query(Usuario).filter(
                 (Usuario.nombre_usuario == username) | (Usuario.email == email)
             ).first()
@@ -183,7 +183,7 @@ def logout():
     flash('Has cerrado sesión.', 'success')
     return redirect(url_for('galeria'))
 
-# --- CART ACTIONS ---
+
 
 @app.route('/comprar/<int:product_id>', methods=['POST'])
 def comprar_producto(product_id):
@@ -218,7 +218,7 @@ def checkout_carrito():
     flash('¡Compra realizada con éxito! Tu bolsa ha sido procesada.', 'success')
     return redirect(url_for('carrito'))
 
-# --- PROFILE ACTIONS ---
+
 
 @app.route('/perfil/add_phone', methods=['POST'])
 def perfil_add_phone():
@@ -227,7 +227,7 @@ def perfil_add_phone():
     
     phone = request.form.get('phone')
     if phone:
-        # Mock action: simply flash success
+        
         flash('✅ Teléfono agregado correctamente.', 'success')
     else:
         flash('Por favor ingresa un número de teléfono válido.', 'warning')
@@ -270,7 +270,7 @@ def perfil_change_password():
     finally:
         db.close()
 
-# --- ADMIN PANEL ---
+
 
 @app.route('/admin')
 def admin():
@@ -340,11 +340,11 @@ def admin_eliminar_producto():
         
     return redirect(url_for('admin'))
 
-# --- API THEME TOGGLE ---
+
 
 @app.route('/toggle-theme', methods=['POST'])
 def toggle_theme():
-    # Toggle theme preference
+    
     session['light_mode'] = not session.get('light_mode', True)
     session.modified = True
     return jsonify({'status': 'ok', 'light_mode': session['light_mode']})
@@ -352,7 +352,7 @@ def toggle_theme():
 def auto_populate_db():
     db = SessionLocal()
     try:
-        # Check if products already exist
+        
         count = db.query(Producto).count()
         if count == 0:
             products = [
@@ -367,7 +367,7 @@ def auto_populate_db():
             db.commit()
             print("Database populated with 6 mock products.")
         
-        # Check if admin user exists
+        
         admin_count = db.query(Usuario).filter(Usuario.nombre_usuario == 'admin').count()
         if admin_count == 0:
             admin_user = Usuario(
@@ -388,5 +388,5 @@ def auto_populate_db():
 
 if __name__ == '__main__':
     auto_populate_db()
-    # Running Flask app on port 5000
+    
     app.run(host='0.0.0.0', port=5000, debug=True)

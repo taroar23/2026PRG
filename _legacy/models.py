@@ -10,7 +10,7 @@ class Usuario(Base):
     email = Column(String(120), unique=True, nullable=False)
     clave = Column(String(200), nullable=False)
     activo = Column(Boolean, default=True)
-    rol = Column(String(20), default="cliente")  # admin / cliente
+    rol = Column(String(20), default="cliente")  
 
     def __repr__(self):
         return f'<Usuario {self.nombre_usuario}>'

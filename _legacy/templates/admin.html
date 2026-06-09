@@ -6,7 +6,7 @@
 <section style="padding: 40px 0;">
     <h1 style="font-weight: 300; margin-bottom: 30px;">Panel de Administración de Productos</h1>
     
-    <!-- ADD PRODUCT FORM -->
+    
     <div style="background-color: var(--card-bg); border: 1px solid var(--card-border); padding: 30px; border-radius: 6px; margin-bottom: 40px;">
         <h3 style="margin-bottom: 20px; font-weight: 400;">Agregar Nuevo Producto</h3>
         <form action="{{ url_for('admin_agregar_producto') }}" method="POST">
@@ -31,7 +31,7 @@
         </form>
     </div>
 
-    <!-- PRODUCTS TABLE -->
+    
     <h3 style="font-weight: 400; margin-bottom: 20px;">Productos Actuales</h3>
     {% if productos %}
         <table class="admin-table">
@@ -55,7 +55,7 @@
             </tbody>
         </table>
         
-        <!-- DELETE PRODUCT -->
+        
         <div style="background-color: var(--card-bg); border: 1px solid var(--card-border); padding: 30px; border-radius: 6px; margin-top: 30px;">
             <h3 style="margin-bottom: 20px; font-weight: 400; color: #dc3545;">Eliminar Producto</h3>
             <form action="{{ url_for('admin_eliminar_producto') }}" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este producto?');">

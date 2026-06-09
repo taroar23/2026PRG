@@ -1,4 +1,4 @@
-/* Premium Monochromatic CSS Variables for VOIK */
+
 :root {
     --bg-color: #f8f9fa;
     --text-color: #121315;
@@ -57,7 +57,7 @@
     --table-border: #2a2c30;
 }
 
-/* Global Reset and Transitions */
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -68,14 +68,14 @@
                 opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-/* Transición suave de filtro para imágenes que responden al tema */
+
 .logo-img,
 .profile-menu-item img,
 .dark-card img {
     transition: filter 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-/* En modo oscuro: invertir imágenes negras para que se vean blancas */
+
 [data-theme="dark"] .logo-img,
 [data-theme="dark"] .profile-menu-item img,
 [data-theme="dark"] .dark-card img {
@@ -100,14 +100,14 @@ hr {
     margin: 20px 0;
 }
 
-/* Container limits */
+
 .app-container {
     max-width: 95%;
     margin: 0 auto;
     padding: 0 15px;
 }
 
-/* --- HEADER / NAVBAR --- */
+
 header.voik-header {
     padding: 20px 0;
     border-bottom: 1px solid var(--hr-color);
@@ -189,7 +189,7 @@ nav.main-nav {
     align-items: center;
 }
 
-/* Minimalist Toggle Switch */
+
 .switch-container {
     display: flex;
     align-items: center;
@@ -328,7 +328,7 @@ input:checked + .slider:before {
     padding-left: 8px;
 }
 
-/* --- HERO SECTION --- */
+
 .hero-section {
     display: flex;
     align-items: center;
@@ -410,7 +410,7 @@ input:checked + .slider:before {
     max-height: 480px;
 }
 
-/* --- PRODUCT SECTION --- */
+
 .section-title {
     margin-bottom: 30px;
     font-weight: 300;
@@ -506,7 +506,7 @@ input:checked + .slider:before {
     transform: translateY(-2px);
 }
 
-/* --- FOOTER --- */
+
 .voik-footer {
     text-align: center;
     border-top: 1px solid var(--hr-color);
@@ -520,7 +520,7 @@ input:checked + .slider:before {
     letter-spacing: 2px;
 }
 
-/* --- NOTICES AND INFO CARDS --- */
+
 .info-alert {
     background-color: var(--card-bg);
     border: 1px solid var(--card-border);
@@ -535,7 +535,7 @@ input:checked + .slider:before {
     font-size: 14px;
 }
 
-/* --- PROFILE LAYOUT --- */
+
 .profile-header {
     text-align: center;
     padding: 30px 0 20px 0;
@@ -654,7 +654,7 @@ input:checked + .slider:before {
     }
 }
 
-/* --- FORMS --- */
+
 .form-container-centered {
     max-width: 420px;
     margin: 80px auto;
@@ -726,7 +726,7 @@ input:checked + .slider:before {
     font-weight: 600;
 }
 
-/* Admin Dashboard Table */
+
 .admin-table {
     width: 100%;
     border-collapse: collapse;
@@ -745,7 +745,7 @@ input:checked + .slider:before {
     font-weight: 600;
 }
 
-/* Flash Messages */
+
 .flash-messages {
     margin: 20px 0;
 }
@@ -781,7 +781,7 @@ input:checked + .slider:before {
     border: 1px solid #bee5eb;
 }
 
-/* Collapse Panel/Expander styling */
+
 .expander-panel {
     border: 1px solid var(--card-border);
     border-radius: 4px;

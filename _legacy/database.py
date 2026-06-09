@@ -3,7 +3,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 from dotenv import load_dotenv
 
-# Cargar .env desde la misma carpeta del archivo
+
 base_dir = os.path.dirname(os.path.abspath(__file__))
 load_dotenv(os.path.join(base_dir, ".env"))
 
@@ -12,10 +12,10 @@ DATABASE_URI = (
     f"@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}"
 )
 
-# Intentar conectar a MySQL, si falla, usar SQLite
+
 try:
     engine = create_engine(DATABASE_URI, echo=False)
-    # Test connection
+    
     with engine.connect() as conn:
         pass
 except Exception:

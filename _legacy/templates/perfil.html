@@ -3,7 +3,7 @@
 {% block title %}Voik — Perfil{% endblock %}
 
 {% block content %}
-<!-- USER AVATAR & HEADER -->
+
 <div class="profile-header">
     <div class="avatar-circle">
         {{ user.nombre[0].upper() }}
@@ -12,9 +12,9 @@
     <p class="profile-email">{{ user.email }}</p>
 </div>
 
-<!-- PROFILE LAYOUT -->
+
 <div class="profile-layout">
-    <!-- Sidebar Menu -->
+    
     <aside class="profile-sidebar">
         {% set active_tab = request.args.get('tab', 'Inicio') %}
         
@@ -54,10 +54,10 @@
         </button>
     </aside>
 
-    <!-- Main Content Area -->
+    
     <section class="profile-content">
         {% if active_tab == 'Inicio' %}
-            <!-- INICIO / ACCOUNT OVERVIEW -->
+            
             <div class="dark-card">
                 <div class="dark-card-icon">
                     <img src="{{ url_for('static', filename='imagenes/credit-card' + ('white' if not session.get('light_mode', True) else '') + '.svg.svg') }}" style="width: 60px; height: 60px;">
@@ -86,7 +86,7 @@
             </div>
             
         {% elif active_tab == 'Guardado' %}
-            <!-- GUARDADO -->
+            
             <h2>❤️ Productos Guardados</h2>
             <hr>
             <div class="info-alert">
@@ -95,7 +95,7 @@
             </div>
             
         {% elif active_tab == 'Cuotas' %}
-            <!-- CUOTAS -->
+            
             <h2>💳 Cuotas</h2>
             <hr>
             <div class="info-alert">
@@ -104,7 +104,7 @@
             </div>
             
         {% elif active_tab == 'Suscripciones' %}
-            <!-- SUSCRIPCIONES -->
+            
             <h2>📱 Suscripciones</h2>
             <hr>
             <div class="info-alert">
@@ -113,7 +113,7 @@
             </div>
             
         {% elif active_tab == 'Historial' %}
-            <!-- HISTORIAL -->
+            
             <h2>📋 Historial de Pedidos</h2>
             <hr>
             <div class="info-alert">
@@ -122,7 +122,7 @@
             </div>
             
         {% elif active_tab == 'PagarRapido' %}
-            <!-- ADD PHONE -->
+            
             <h2>⚡ Paga Más Rápido</h2>
             <hr>
             <p style="margin-bottom: 20px; font-size: 14px;">Ingresa y verifica un número de teléfono para pagar más rápido en millones de tiendas.</p>
@@ -142,7 +142,7 @@
             </form>
             
         {% elif active_tab == 'Configuracion' %}
-            <!-- CONFIGURACION -->
+            
             <h2>⚙️ Configuración</h2>
             <hr>
             
@@ -178,7 +178,7 @@
             <button class="buy-btn" onclick="location.href='/logout'" style="margin-top: 10px; border-color: #dc3545; color: #dc3545; background-color: transparent;">🚪 Cerrar Sesión</button>
             
         {% elif active_tab == 'Ayuda' %}
-            <!-- AYUDA -->
+            
             <h2>❓ Ayuda y Soporte</h2>
             <hr>
             <p style="margin-bottom: 20px; font-weight: bold;">Preguntas Frecuentes</p>

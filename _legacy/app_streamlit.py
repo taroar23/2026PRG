@@ -4,10 +4,10 @@ from models import Usuario, Producto
 from auth import hash_password, verify_password
 import time
 
-# Configuración de página
+
 st.set_page_config(page_title="Voik", page_icon="🛍️", layout="wide", initial_sidebar_state="expanded")
 
-# Intentar cargar el logo si el usuario lo guarda como logo.png
+
 import os
 from pathlib import Path
 base_dir = os.path.abspath(os.path.dirname(__file__))
@@ -16,14 +16,14 @@ if os.path.exists(logo_path):
     st.image(logo_path, width=90)
 
 
-# Estilos CSS Modernos y Minimalistas Ultra Premium con Animaciones
+
 st.markdown("""
     <style>
-    /* Ocultar el pie de página y header default de Streamlit */
+    
     footer {visibility: hidden;}
     header {visibility: hidden;}
     
-    /* Configuración principal con transiciones suaves */
+    
     .block-container {
         padding-top: 1rem !important; 
         max-width: 95%;
@@ -38,7 +38,7 @@ st.markdown("""
         transition: background-color 0.6s cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
     
-    /* Buscador minimalista con transición */
+    
     [data-testid="stTextInput"] input {
         background-color: #1a1b1e !important;
         border: 1px solid #2a2c30 !important;
@@ -47,7 +47,7 @@ st.markdown("""
         transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
     
-    /* Botones principales suaves y blancos globales */
+    
     .stButton>button {
         border-radius: 4px;
         background-color: #ffffff !important;
@@ -61,7 +61,7 @@ st.markdown("""
         transform: translateY(-2px);
     }
     
-    /* OVERRIDE PARA EL POPOVER (Menú Perfil) */
+    
     div[data-testid="stPopoverBody"] {
         background-color: #121315 !important;
         border: 1px solid #1a1b1e !important;
@@ -72,7 +72,7 @@ st.markdown("""
         transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
     
-    /* Botones ADENTRO del popover: sin fondo, alineados a la izquierda y con línea divisora */
+    
     div[data-testid="stPopoverBody"] .stButton>button {
         background-color: transparent !important;
         color: #f8f9fa !important;
@@ -93,7 +93,7 @@ st.markdown("""
         padding-left: 8px !important;
     }
     
-    /* Botón flotante externo del Popover (El icono 👤 en sí) */
+    
     div[data-testid="stPopover"] > button {
         background-color: transparent !important;
         color: #a0a0a0 !important;
@@ -111,7 +111,7 @@ st.markdown("""
         transform: scale(1.1);
     }
     
-    /* Estilos para botones del menú del perfil (sin recuadro) */
+    
     .profile-menu-button {
         background-color: transparent !important;
         border: none !important;
@@ -128,21 +128,21 @@ st.markdown("""
         padding-left: 8px !important;
     }
     
-    /* Pequeña subida a la barra de menú global para ajustar con el logo */
+    
     iframe[title="streamlit_option_menu.option_menu"] {
         margin-top: 0 !important;
         vertical-align: middle !important;
         transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
     
-    /* Fijar altura del encabezado y alineación de columnas */
+    
     div[data-testid="stHorizontalBlock"] > div[data-testid="column"] {
         display: flex !important;
         align-items: center !important;
         min-height: 60px !important;
     }
     
-    /* Ajuste para el toggle flotante y el menú de perfil */
+    
     div[data-testid="stToggle"], div[data-testid="stPopover"] > button {
         margin-top: 0 !important;
         padding-top: 0 !important;
@@ -151,7 +151,7 @@ st.markdown("""
     
     div[data-testid="stFileUploader"] { display: none; }
     
-    /* Animación de fade para todos los elementos */
+    
     * {
         transition: background-color 0.6s cubic-bezier(0.4, 0, 0.2, 1), 
                     color 0.6s cubic-bezier(0.4, 0, 0.2, 1),
@@ -160,7 +160,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Inicialización de estado de sesión
+
 if 'user_id' not in st.session_state:
     st.session_state.user_id = None
 if 'user_name' not in st.session_state:
@@ -173,7 +173,7 @@ if 'light_mode' not in st.session_state:
 pfp_file = os.path.join(base_dir, "pfpblack.png") if st.session_state.light_mode else os.path.join(base_dir, "pfpwhite.png")
 pfp_uri = Path(pfp_file).as_uri()
 
-# INYECCIÓN DINÁMICA DE TEMA CLARO CON ANIMACIONES
+
 if st.session_state.light_mode:
     st.markdown("""
         <style>
@@ -183,13 +183,13 @@ if st.session_state.light_mode:
             100% { opacity: 1; }
         }
         
-        /* Invert backgrounds to white con animación */
+        
         .stApp, .block-container { 
             background-color: #f8f9fa !important;
             animation: fadeTransition 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
-        /* Input Fields con transición */
+        
         [data-testid="stTextInput"] input, div[data-testid="stNumberInput"] input { 
             background-color: #ffffff !important;
             border: 1px solid #dcdcdc !important;
@@ -197,7 +197,7 @@ if st.session_state.light_mode:
             transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1) !important;
         }
         
-        /* Popovers con transición suave */
+        
         div[data-testid="stPopoverBody"], .stPopoverBody, div[role="dialog"] { 
             background-color: #ffffff !important;
             border: 1px solid #dddddd !important;
@@ -219,7 +219,7 @@ if st.session_state.light_mode:
             color: #000000 !important;
         }
         
-        /* Regular buttons */
+        
         div.stButton > button { 
             background-color: #eeeeee !important;
             color: #121315 !important;
@@ -231,13 +231,13 @@ if st.session_state.light_mode:
             transform: translateY(-2px);
         }
         
-        /* Generic Text con transición */
+        
         h1, h2, h3, h4, p, span { 
             color: #121315 !important;
             transition: color 0.6s cubic-bezier(0.4, 0, 0.2, 1) !important;
         }
         
-        /* Corregir tooltips (como el de 'Tu Cuenta') para que se vean bien sobre su fondo oscuro */
+        
         [data-testid="stTooltipContent"], 
         [data-testid="stTooltipContent"] p, 
         [data-testid="stTooltipContent"] span {
@@ -245,7 +245,7 @@ if st.session_state.light_mode:
             background-color: #1a1b1e !important;
         }
         
-        /* Asegurar que las tarjetas oscuras personalizadas conserven su texto claro */
+        
         .dark-card p, .dark-card span {
             color: #ffffff !important;
         }
@@ -257,7 +257,7 @@ if st.session_state.light_mode:
             transition: border-color 0.6s cubic-bezier(0.4, 0, 0.2, 1) !important;
         }
         
-        /* Botón Popover principal */
+        
         [data-testid="stPopover"] button { 
             background: transparent !important;
             background-color: transparent !important; 
@@ -272,18 +272,18 @@ if st.session_state.light_mode:
             transform: scale(1.1);
         }
         
-        /* Toggle Switch Override */
+        
         div[data-testid="stWidgetLabel"] p { 
             color: #121315 !important;
             transition: color 0.6s cubic-bezier(0.4, 0, 0.2, 1) !important;
         }
         
-        /* iframe transparente */
+        
         iframe { 
             background-color: transparent !important;
         }
 
-        /* Botón del popover de cuenta - estilo limpio con texto */
+        
         div[data-testid="stPopover"] > button {
             background-color: transparent !important;
             background-image: none !important;
@@ -319,13 +319,13 @@ else:
             100% {{ opacity: 1; }}
         }}
         
-        /* Tema Oscuro con animación */
+        
         .stApp, .block-container {{
             background-color: #121315 !important;
             animation: fadeTransition 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }}
         
-        /* Transiciones para tema oscuro */
+        
         [data-testid="stTextInput"] input, div[data-testid="stNumberInput"] input {{
             background-color: #1a1b1e !important;
             border: 1px solid #2a2c30 !important;
@@ -362,7 +362,7 @@ else:
             transition: border-color 0.6s cubic-bezier(0.4, 0, 0.2, 1) !important;
         }}
         
-        /* Botón del popover de cuenta - estilo limpio con texto */
+        
         div[data-testid="stPopover"] > button {{
             background-color: transparent !important;
             background-image: none !important;
@@ -416,7 +416,7 @@ def get_productos():
     db.close()
     return productos
 
-# ===== SISTEMA DE ICONOS SVG =====
+
 def load_svg_icon(filename, light_mode=False, size=20):
     """Carga un icono SVG y retorna el contenido HTML.
     
@@ -424,19 +424,19 @@ def load_svg_icon(filename, light_mode=False, size=20):
       - Fondo OSCURO (light_mode=False): ícono BLANCO  -> 'userwhite.svg.svg'
       - Fondo CLARO  (light_mode=True):  ícono NEGRO   -> 'user.svg.svg'
     """
-    base_name = filename  # e.g. 'user.svg'
+    base_name = filename  
 
     if not light_mode:
-        # Fondo oscuro → ícono blanco
+        
         name_no_ext = base_name.replace('.svg', '')
         disk_filename = f"{name_no_ext}white.svg.svg"
     else:
-        # Fondo claro → ícono negro (sin sufijo white)
-        disk_filename = base_name + ".svg"   # 'user.svg.svg'
+        
+        disk_filename = base_name + ".svg"   
 
     svg_path = os.path.join(base_dir, "static", "imagenes", disk_filename)
 
-    # Fallback: usar la variante contraria si no existe
+    
     if not os.path.exists(svg_path):
         fallback = base_name + ".svg"
         svg_path = os.path.join(base_dir, "static", "imagenes", fallback)
@@ -445,7 +445,7 @@ def load_svg_icon(filename, light_mode=False, size=20):
         try:
             with open(svg_path, "r", encoding="utf-8") as f:
                 svg_content = f.read()
-            # Forzar tamaño via style inline
+            
             svg_content = svg_content.replace(
                 '<svg ', f'<svg style="width:{size}px;height:{size}px;display:block;" '
             )
@@ -458,33 +458,33 @@ def load_svg_icon(filename, light_mode=False, size=20):
             return ""
     return ""
 
-# Mapeo de iconos SVG por categoría (nombres sin la doble extensión, load_svg_icon la resuelve)
+
 ICON_MAP = {
-    # Navegación / Usuario
+    
     "mi_cuenta": "user.svg",
     "editar_perfil": "user-pen.svg",
     "config_cuenta": "user-cog.svg",
     
-    # Pagos
+    
     "metodos_pago": "credit-card.svg",
     "carrito": "shopping-cart.svg",
     
-    # Guardado / Publicar
+    
     "favoritos": "heart.svg",
     "galeria": "image.svg",
     
-    # Órdenes
+    
     "historial_pedidos": "clipboard-list.svg",
     "envios": "van.svg",
     
-    # Descubrir
+    
     "tendencias": "trending-up.svg",
     "productos_nuevos": "badge-plus.svg",
     
-    # Suscripciones
+    
     "suscripciones": "banknote.svg",
     
-    # Sistema
+    
     "configuracion": "settings.svg",
     "ayuda": "circle-question-mark.svg",
 }
@@ -504,7 +504,7 @@ def get_icon_with_text(icon_key, text, light_mode=False, size=20):
 
 from streamlit_option_menu import option_menu
 
-# --- HEADER PRINCIPAL (VOIK MINIMALISTA) ---
+
 col_logo, col_nav, col_toggle, col_icons = st.columns([1.5, 6.5, 1, 1], vertical_alignment="center")
 
 with col_logo:
@@ -518,7 +518,7 @@ with col_logo:
 with col_nav:
     menu_options = ["Galería", "Nuevo", "Tendencias"]
     
-    # Adaptar colores del menú según tema
+    
     nav_text_color = "#666" if st.session_state.light_mode else "#a0a0a0"
     nav_active_color = "#000" if st.session_state.light_mode else "#ffffff"
     nav_bg_color = "#f8f9fa" if st.session_state.light_mode else "#121315"
@@ -538,7 +538,7 @@ with col_nav:
     )
 
 with col_toggle:
-    # Renderizamos el componente st.toggle para el cambio de tema
+    
     st.toggle("Claro", key="light_mode")
 
 with col_icons:
@@ -563,9 +563,9 @@ with col_icons:
 
 st.markdown("<hr style='border-top: 1px solid #2a2c30; margin-top: 5px; margin-bottom: 0px;'>", unsafe_allow_html=True)
 
-# Lógica principal de vistas usando override 
+
 view_to_show = st.session_state.get('view_override', choice)
-# Limpiar override cada que el usuario presione el menu superior real
+
 if choice != st.session_state.get('last_choice', ''):
     st.session_state.last_choice = choice
     st.session_state.view_override = choice
@@ -573,7 +573,7 @@ if choice != st.session_state.get('last_choice', ''):
 
 if view_to_show == "Galería":
     
-    # HERO SECTION (Obsidian Series)
+    
     col_text, col_img = st.columns([1, 1.2])
     
     with col_text:
@@ -598,7 +598,7 @@ if view_to_show == "Galería":
 
     st.markdown("<br><hr style='border-top: 1px solid #2a2c30;'><br>", unsafe_allow_html=True)
 
-    # PRODUCT GRID
+    
     st.markdown("<h3 style='margin-bottom: 30px; font-weight:300;'>Catálogo Principal</h3>", unsafe_allow_html=True)
     productos = get_productos()
     
@@ -616,7 +616,7 @@ if view_to_show == "Galería":
         st.info("No hay productos disponibles actualmente.")
 
 elif view_to_show == "Nuevo":
-    # NUEVOS LANZAMIENTOS
+    
     st.markdown("""
         <div style='padding-top: 60px; padding-bottom: 60px; text-align: center;'>
             <h1 style="font-size: 50px; font-family: 'Times New Roman', serif; font-weight: 300; margin-bottom: 0; color: #ffffff;">Lanzamientos Recientes</h1>
@@ -626,7 +626,7 @@ elif view_to_show == "Nuevo":
     
     productos = get_productos()
     if len(productos) > 0:
-        nuevos = reversed(productos[-3:]) # Muestra los 3 más recientes simulando "Nuevos"
+        nuevos = reversed(productos[-3:]) 
         cols = st.columns(3)
         for idx, prod in enumerate(nuevos):
             with cols[idx % 3]:
@@ -639,7 +639,7 @@ elif view_to_show == "Nuevo":
         st.info("Vuelve pronto para ver la nueva colección.")
 
 elif view_to_show == "Tendencias":
-    # MAS VENDIDOS
+    
     st.markdown("""
         <div style='padding-top: 60px; padding-bottom: 60px; text-align: left; border-bottom: 1px solid #2a2c30;'>
             <p style="letter-spacing: 3px; font-size: 10px; color: #888; text-transform: uppercase;">Los Favoritos del Círculo</p>
@@ -674,7 +674,7 @@ elif view_to_show == "Carrito":
             st.rerun()
 
 elif view_to_show == "Perfil":
-    # Inicializar selección de menú de perfil
+    
     if 'profile_menu' not in st.session_state:
         st.session_state.profile_menu = "Inicio"
     
@@ -684,7 +684,7 @@ elif view_to_show == "Perfil":
         db = SessionLocal()
         user = db.query(Usuario).filter(Usuario.id == st.session_state.user_id).first()
         
-        # Header con perfil del usuario - ARRIBA
+        
         st.markdown(f"""
             <div style='text-align: center; padding: 30px 0px 20px 0px; border-bottom: 1px solid #2a2c30;'>
                 <div style='display: inline-block; width: 60px; height: 60px; background-color: #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 10px;'>
@@ -694,17 +694,17 @@ elif view_to_show == "Perfil":
             </div>
         """, unsafe_allow_html=True)
         
-        # Layout: Menú lateral + Contenido principal
+        
         col_menu, col_space, col_content = st.columns([0.8, 0.1, 2.5], gap="small")
         
         with col_menu:
-            # CSS: hace los botones del menú lateral completamente transparentes.
-            # :has(.profile-nav-marker) apunta sólo a esta columna.
+            
+            
             text_col  = "#121315" if st.session_state.light_mode else "#ffffff"
             hover_col = "#000000" if st.session_state.light_mode else "#ffffff"
             st.markdown(f"""
             <style>
-            /* Botones del menú lateral de perfil — sin fondo, sin borde */
+            
             div[data-testid="stColumn"]:has(.profile-nav-marker) .stButton > button,
             div[data-testid="column"]:has(.profile-nav-marker) .stButton > button {{
                 background-color: transparent !important;
@@ -725,7 +725,7 @@ elif view_to_show == "Perfil":
                 background-color: transparent !important;
                 border: none !important;
             }}
-            /* Eliminar el espacio que deja el contenedor del botón */
+            
             div[data-testid="stColumn"]:has(.profile-nav-marker) div[data-testid="stElementContainer"]:has(.stButton),
             div[data-testid="column"]:has(.profile-nav-marker) div[data-testid="stElementContainer"]:has(.stButton) {{
                 height: 0px !important;
@@ -733,7 +733,7 @@ elif view_to_show == "Perfil":
                 margin: 0 !important;
                 padding: 0 !important;
             }}
-            /* Contenedor relativo para superponer el botón invisible */
+            
             div[data-testid="stColumn"]:has(.profile-nav-marker) [data-testid="stHorizontalBlock"],
             div[data-testid="column"]:has(.profile-nav-marker) [data-testid="stHorizontalBlock"] {{
                 position: relative !important;
@@ -744,7 +744,7 @@ elif view_to_show == "Perfil":
 
             st.markdown("<div style='padding-top: 8px;'></div>", unsafe_allow_html=True)
 
-            # Menú con iconos SVG
+            
             menu_items = [
                 ("mi_cuenta",        "Mi Cuenta",           "Inicio"),
                 ("favoritos",        "Guardado",            "Guardado"),
@@ -758,7 +758,7 @@ elif view_to_show == "Perfil":
             for icon_key, label, key in menu_items:
                 is_selected = st.session_state.profile_menu == key
 
-                # Color: ítem seleccionado resaltado, resto en gris
+                
                 if is_selected:
                     item_color = "#121315" if st.session_state.light_mode else "#ffffff"
                     item_weight = "600"
@@ -768,7 +768,7 @@ elif view_to_show == "Perfil":
 
                 icon_html = load_svg_icon(ICON_MAP[icon_key], st.session_state.light_mode, size=18)
 
-                # 1) Render visual: ícono + texto (se ve)
+                
                 st.markdown(f"""
                 <div style='display:flex; align-items:center; gap:10px;
                             padding:9px 4px; color:{item_color};
@@ -779,15 +779,15 @@ elif view_to_show == "Perfil":
                 </div>
                 """, unsafe_allow_html=True)
 
-                # 2) Botón invisible encima (captura el click, altura = la del div de arriba)
+                
                 if st.button("‎", key=f"menu_{key}", use_container_width=True):
                     st.session_state.profile_menu = key
                     st.rerun()
         
         with col_content:
-            # ===== INICIO (Home) - Tarjetas principales =====
+            
             if st.session_state.profile_menu == "Inicio":
-                # Tarjeta grande "Métodos de pago"
+                
                 cc_icon = load_svg_icon(ICON_MAP["metodos_pago"], st.session_state.light_mode, size=60)
                 st.markdown(f"""
                 <div class='dark-card' style='background-color: #1a1b1e; padding: 40px; border-radius: 8px; text-align: center; margin-bottom: 30px;'>
@@ -805,10 +805,10 @@ elif view_to_show == "Perfil":
                 
                 st.markdown("<br>", unsafe_allow_html=True)
                 
-                # Tarjetas de acceso rápido - Guardado y Envíos
+                
                 col_tarj1, col_tarj2 = st.columns(2, gap="large")
                 
-                # Tarjeta Guardado (Favoritos)
+                
                 fav_icon = load_svg_icon(ICON_MAP["favoritos"], st.session_state.light_mode, size=50)
                 with col_tarj1:
                     st.markdown(f"""
@@ -823,7 +823,7 @@ elif view_to_show == "Perfil":
                         st.session_state.profile_menu = "Guardado"
                         st.rerun()
                 
-                # Tarjeta Envíos
+                
                 van_icon = load_svg_icon(ICON_MAP["envios"], st.session_state.light_mode, size=50)
                 with col_tarj2:
                     st.markdown(f"""
@@ -834,38 +834,38 @@ elif view_to_show == "Perfil":
                         <p style='margin: 0; font-size: 16px; font-weight: 600;'>Envíos</p>
                     </div>
                     """, unsafe_allow_html=True)
-                    # Placeholder para "Siguiendo" - solo muestra la tarjeta
+                    
                     st.markdown("<div style='opacity: 0; height: 20px;'></div>", unsafe_allow_html=True)
             
-            # ===== GUARDADO =====
+            
             elif st.session_state.profile_menu == "Guardado":
                 st.markdown("## ❤️ Productos Guardados")
                 st.markdown("---")
                 st.info("Aquí aparecerán los productos que hayas marcado como favoritos.")
                 st.markdown("Actualmente no tienes productos guardados.")
             
-            # ===== CUOTAS =====
+            
             elif st.session_state.profile_menu == "Cuotas":
                 st.markdown("## 💳 Cuotas")
                 st.markdown("---")
                 st.info("Sistema de cuotas sin interés y planes de pago.")
                 st.markdown("Actualmente no tienes cuotas activas.")
             
-            # ===== SUSCRIPCIONES =====
+            
             elif st.session_state.profile_menu == "Suscripciones":
                 st.markdown("## 📱 Suscripciones")
                 st.markdown("---")
                 st.info("Gestiona tus suscripciones y membresías.")
                 st.markdown("Actualmente no tienes suscripciones activas.")
             
-            # ===== HISTORIAL DE PEDIDOS =====
+            
             elif st.session_state.profile_menu == "Historial":
                 st.markdown("## 📋 Historial de Pedidos")
                 st.markdown("---")
                 st.info("Aquí aparecerán tus compras anteriores.")
                 st.markdown("Actualmente no tienes pedidos registrados.")
             
-            # ===== PAGA MÁS RÁPIDO =====
+            
             elif st.session_state.profile_menu == "PagarRapido":
                 st.markdown("## ⚡ Paga Más Rápido")
                 st.markdown("---")
@@ -883,7 +883,7 @@ elif view_to_show == "Perfil":
                 if st.button("Agregar teléfono", type="primary", use_container_width=True):
                     st.success("✅ Teléfono agregado correctamente.")
             
-            # ===== CONFIGURACIÓN =====
+            
             elif st.session_state.profile_menu == "Configuracion":
                 st.markdown("## ⚙️ Configuración")
                 st.markdown("---")
@@ -923,7 +923,7 @@ elif view_to_show == "Perfil":
                     st.success("✅ Sesión cerrada.")
                     st.rerun()
             
-            # ===== AYUDA =====
+            
             elif st.session_state.profile_menu == "Ayuda":
                 st.markdown("## ❓ Ayuda y Soporte")
                 st.markdown("---")
@@ -981,7 +981,7 @@ elif view_to_show == "Registrarse":
             if submit:
                 if nombre and email and username and password:
                     db = SessionLocal()
-                    # Verificar si existe el usuario
+                    
                     user_exist = db.query(Usuario).filter((Usuario.nombre_usuario == username) | (Usuario.email == email)).first()
                     if user_exist:
                         st.error("El usuario o el correo electrónico ya están registrados.")
@@ -1026,11 +1026,11 @@ elif view_to_show == "Panel Admin":
         productos = get_productos()
         if len(productos) > 0:
             import pandas as pd
-            # Mostrar los productos en una tabla interactiva
+            
             df = pd.DataFrame([{"ID": p.id, "Nombre": p.nombre, "Precio": p.precio, "Existencia": p.existencia} for p in productos])
             st.dataframe(df, use_container_width=True)
             
-            # Simple eliminar producto
+            
             st.subheader("Eliminar Producto")
             id_to_delete = st.selectbox("Seleccionar Producto a Eliminar", options=[p.id for p in productos], format_func=lambda x: next((p.nombre for p in productos if p.id == x), x))
             if st.button("Eliminar", type="primary"):
