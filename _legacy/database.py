@@ -15,10 +15,16 @@ DATABASE_URI = (
 
 try:
     engine = create_engine(DATABASE_URI, echo=False)
-    
+
     with engine.connect() as conn:
         pass
-except Exception:
+
+    print(f"✅ Conectado a MySQL: {DATABASE_URI}")
+
+except Exception as e:
+    print(f"⚠️ No se pudo conectar a MySQL. Motivo: {e}")
+    print("↪ Usando SQLite como respaldo (database.db)")
+
     db_path = os.path.join(base_dir, "database.db")
     DATABASE_URI = f"sqlite:///{db_path}"
     engine = create_engine(DATABASE_URI, echo=False, connect_args={"check_same_thread": False})
