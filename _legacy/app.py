@@ -647,7 +647,9 @@ def perfil_update_info():
 @app.route('/perfil/update_photo', methods=['POST'])
 def perfil_update_photo():
     """Actualiza la foto de perfil (base64)."""
-    if not session.get('user_id'):
+    user_id = session.get('user_id')
+    if not user_id:
+        flash('Debes iniciar sesión.', 'danger')
         return redirect(url_for('login'))
 
     foto = request.files.get('foto_perfil')
@@ -658,25 +660,58 @@ def perfil_update_photo():
     allowed = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
     ext = foto.filename.rsplit('.', 1)[-1].lower()
     if ext not in allowed:
-        flash('Formato de imagen no permitido. Usa PNG, JPG o GIF.', 'danger')
+        flash('Formato de imagen no permitido. Usa PNG, JPG, GIF o WEBP.', 'danger')
         return redirect(url_for('perfil', tab='Configuracion'))
 
     foto_data = foto.read()
+    if not foto_data:
+        flash('La imagen está vacía.', 'danger')
+        return redirect(url_for('perfil', tab='Configuracion'))
+    
     if len(foto_data) > 2 * 1024 * 1024:  # 2MB limit
         flash('La imagen es demasiado grande. Máximo 2MB.', 'danger')
         return redirect(url_for('perfil', tab='Configuracion'))
 
-    foto_b64 = f"data:image/{ext};base64,{base64.b64encode(foto_data).decode()}"
-
-    db = SessionLocal()
     try:
-        user = db.query(Usuario).filter(Usuario.id == session.get('user_id')).first()
-        if user:
-            user.foto_perfil = foto_b64
+        # Mapear extensiones a MIME types correctos
+        mime_types = {'jpg': 'jpeg', 'jpeg': 'jpeg', 'png': 'png', 'gif': 'gif', 'webp': 'webp'}
+        mime_type = mime_types.get(ext, ext)
+        
+        # Codificar base64
+        foto_b64 = base64.b64encode(foto_data).decode('utf-8').strip()
+        foto_url = f"data:image/{mime_type};base64,{foto_b64}"
+        
+        # Validar que el data URL es válido
+        if not foto_url.startswith('data:image/') or ';base64,' not in foto_url:
+            raise ValueError("Data URL inválida")
+        
+        db = SessionLocal()
+        try:
+            print(f"DEBUG: Buscando usuario con ID={user_id}")
+            user = db.query(Usuario).filter(Usuario.id == user_id).first()
+            
+            if not user:
+                print(f"DEBUG: Usuario {user_id} NO encontrado en BD")
+                flash('Usuario no encontrado en base de datos.', 'danger')
+                return redirect(url_for('perfil', tab='Configuracion'))
+            
+            print(f"DEBUG: Usuario encontrado: {user.nombre} ({user.email})")
+            print(f"DEBUG: Guardando foto de {len(foto_b64)} caracteres base64")
+            
+            user.foto_perfil = foto_url
             db.commit()
-            flash('Foto de perfil actualizada.', 'success')
-    finally:
-        db.close()
+            
+            print(f"DEBUG: Foto guardada exitosamente")
+            flash('✅ Foto de perfil actualizada correctamente.', 'success')
+        finally:
+            db.close()
+            
+    except Exception as e:
+        print(f"ERROR al guardar foto: {type(e).__name__}: {e}")
+        import traceback
+        traceback.print_exc()
+        flash(f'Error al guardar la foto: {str(e)}', 'danger')
+        return redirect(url_for('perfil', tab='Configuracion'))
 
     return redirect(url_for('perfil', tab='Configuracion'))
 
