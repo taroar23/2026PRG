@@ -2,78 +2,405 @@
 
 {% block title %}Voik — Panel Admin{% endblock %}
 
+{% block extra_css %}
+<style>
+.admin-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid var(--hr-color);
+    margin-bottom: 30px;
+    margin-top: 10px;
+}
+.admin-tab-btn {
+    padding: 12px 28px;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--text-muted);
+    margin-bottom: -2px;
+    transition: color 0.2s, border-color 0.2s !important;
+    letter-spacing: 0.5px;
+}
+.admin-tab-btn.active, .admin-tab-btn:hover {
+    color: var(--text-color);
+    border-bottom: 3px solid var(--text-color);
+}
+.admin-tab-panel { display: none; }
+.admin-tab-panel.active { display: block; }
+
+.stat-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 30px;
+}
+.stat-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+}
+.stat-card .stat-num {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-color);
+}
+.stat-card .stat-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 4px;
+}
+
+.pdf-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    background: var(--button-primary-bg);
+    color: var(--button-primary-text);
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    margin-bottom: 20px;
+}
+.pdf-btn:hover { opacity: 0.85; }
+
+.badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+.badge-admin { background: #121315; color: #fff; }
+.badge-cliente { background: var(--table-header-bg); color: var(--text-color); }
+.badge-moderador { background: #ffc107; color: #000; }
+.badge-activo { background: #d4edda; color: #155724; }
+.badge-inactivo { background: #f8d7da; color: #721c24; }
+
+.action-form-inline { display: inline; }
+.btn-sm {
+    padding: 4px 12px;
+    font-size: 12px;
+    border-radius: 3px;
+    border: 1px solid var(--input-border);
+    background: var(--button-bg);
+    color: var(--button-text);
+    cursor: pointer;
+    font-weight: 500;
+}
+.btn-sm:hover { background: var(--button-hover-bg); }
+.btn-sm-danger { border-color: #dc3545; color: #dc3545; background: transparent; }
+.btn-sm-danger:hover { background: #dc3545; color: #fff; }
+
+.rol-select {
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 3px;
+    border: 1px solid var(--input-border);
+    background: var(--input-bg);
+    color: var(--input-text);
+    cursor: pointer;
+}
+
+.compra-detalle-list {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.compra-detalle-list li::before { content: "• "; }
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+@media (max-width: 900px) {
+    .stat-cards { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 576px) {
+    .stat-cards { grid-template-columns: 1fr; }
+    .admin-tab-btn { padding: 10px 14px; font-size: 13px; }
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <section style="padding: 40px 0;">
-    <h1 style="font-weight: 300; margin-bottom: 30px;">Panel de Administración de Productos</h1>
-    
-    
-    <div style="background-color: var(--card-bg); border: 1px solid var(--card-border); padding: 30px; border-radius: 6px; margin-bottom: 40px;">
-        <h3 style="margin-bottom: 20px; font-weight: 400;">Agregar Nuevo Producto</h3>
-        <form action="{{ url_for('admin_agregar_producto') }}" method="POST">
-            <div class="form-group">
-                <label for="prod_nombre" class="form-label">Nombre del Producto</label>
-                <input type="text" id="prod_nombre" name="prod_nombre" class="form-control" placeholder="Ej: Auriculares Obsidian" required>
-            </div>
-            
-            <div style="display: flex; gap: 20px;">
-                <div class="form-group" style="flex: 1;">
-                    <label for="prod_precio" class="form-label">Precio ($)</label>
-                    <input type="number" id="prod_precio" name="prod_precio" class="form-control" placeholder="100" min="0" step="1" required>
-                </div>
-                
-                <div class="form-group" style="flex: 1;">
-                    <label for="prod_existencia" class="form-label">Existencia (Cantidad)</label>
-                    <input type="number" id="prod_existencia" name="prod_existencia" class="form-control" placeholder="10" min="0" step="1" required>
-                </div>
-            </div>
-            
-            <button type="submit" class="submit-btn" style="width: auto; padding: 12px 30px;">Crear Producto</button>
-        </form>
+    <h1 style="font-weight: 300; margin-bottom: 6px;">Panel de Administración</h1>
+    <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 24px;">Gestiona productos, usuarios y compras de Voik.</p>
+
+    <!-- ESTADÍSTICAS GENERALES -->
+    <div class="stat-cards">
+        <div class="stat-card">
+            <div class="stat-num">{{ stats.total_productos }}</div>
+            <div class="stat-label">Productos</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-num">{{ stats.total_usuarios }}</div>
+            <div class="stat-label">Usuarios</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-num">{{ stats.total_compras }}</div>
+            <div class="stat-label">Compras</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-num">${{ "{:,.0f}".format(stats.total_ingresos) }}</div>
+            <div class="stat-label">Ingresos Totales</div>
+        </div>
     </div>
 
-    
-    <h3 style="font-weight: 400; margin-bottom: 20px;">Productos Actuales</h3>
-    {% if productos %}
+    <!-- TABS DE NAVEGACIÓN -->
+    <div class="admin-tabs" id="adminTabs">
+        <button class="admin-tab-btn active" onclick="switchTab('productos')" id="tab-btn-productos">🏷️ Productos</button>
+        <button class="admin-tab-btn" onclick="switchTab('usuarios')" id="tab-btn-usuarios">👥 Usuarios</button>
+        <button class="admin-tab-btn" onclick="switchTab('compras')" id="tab-btn-compras">🛒 Compras</button>
+    </div>
+
+    <!-- ═══════════════ PANEL: PRODUCTOS ═══════════════ -->
+    <div class="admin-tab-panel active" id="panel-productos">
+        <div class="section-header">
+            <h2 style="font-weight: 400; font-size: 20px;">Gestión de Productos</h2>
+            <a href="{{ url_for('admin_pdf_productos') }}" class="pdf-btn">
+                📄 Descargar PDF Productos
+            </a>
+        </div>
+
+        <!-- Agregar producto -->
+        <div style="background: var(--card-bg); border: 1px solid var(--card-border); padding: 30px; border-radius: 8px; margin-bottom: 30px;">
+            <h3 style="margin-bottom: 20px; font-weight: 500; font-size: 16px;">➕ Agregar Nuevo Producto</h3>
+            <form action="{{ url_for('admin_agregar_producto') }}" method="POST">
+                <div class="form-group">
+                    <label for="prod_nombre" class="form-label">Nombre del Producto</label>
+                    <input type="text" id="prod_nombre" name="prod_nombre" class="form-control" placeholder="Ej: Auriculares Obsidian" required>
+                </div>
+                <div style="display: flex; gap: 20px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label for="prod_precio" class="form-label">Precio ($)</label>
+                        <input type="number" id="prod_precio" name="prod_precio" class="form-control" placeholder="100" min="0" step="1" required>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label for="prod_existencia" class="form-label">Existencia (Cantidad)</label>
+                        <input type="number" id="prod_existencia" name="prod_existencia" class="form-control" placeholder="10" min="0" step="1" required>
+                    </div>
+                </div>
+                <button type="submit" class="submit-btn" style="width: auto; padding: 12px 30px;">Crear Producto</button>
+            </form>
+        </div>
+
+        <!-- Tabla de productos -->
+        <h3 style="font-weight: 400; margin-bottom: 16px; font-size: 16px;">Productos Actuales</h3>
+        {% if productos %}
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                        <th>Existencia</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for prod in productos %}
+                        <tr>
+                            <td>{{ prod.id }}</td>
+                            <td>{{ prod.nombre }}</td>
+                            <td>${{ "{:,.0f}".format(prod.precio) }}</td>
+                            <td>{{ prod.existencia }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- Eliminar producto -->
+            <div style="background: var(--card-bg); border: 1px solid var(--card-border); padding: 30px; border-radius: 8px; margin-top: 10px;">
+                <h3 style="margin-bottom: 20px; font-weight: 500; font-size: 16px; color: #dc3545;">🗑️ Eliminar Producto</h3>
+                <form action="{{ url_for('admin_eliminar_producto') }}" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar este producto?');">
+                    <div class="form-group">
+                        <label for="id_to_delete" class="form-label">Seleccionar Producto a Eliminar</label>
+                        <select id="id_to_delete" name="id_to_delete" class="form-control" required style="height: 48px;">
+                            {% for prod in productos %}
+                                <option value="{{ prod.id }}">{{ prod.nombre }} (ID: {{ prod.id }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="submit-btn" style="width: auto; padding: 12px 30px; background-color: #dc3545;">Eliminar</button>
+                </form>
+            </div>
+        {% else %}
+            <div class="info-alert">
+                <p class="info-alert-text">No hay productos en la base de datos.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- ═══════════════ PANEL: USUARIOS ═══════════════ -->
+    <div class="admin-tab-panel" id="panel-usuarios">
+        <div class="section-header">
+            <h2 style="font-weight: 400; font-size: 20px;">Gestión de Usuarios</h2>
+            <a href="{{ url_for('admin_pdf_usuarios') }}" class="pdf-btn">
+                📄 Descargar PDF Usuarios
+            </a>
+        </div>
+
+        {% if usuarios %}
         <table class="admin-table">
             <thead>
                 <tr>
                     <th>ID</th>
                     <th>Nombre</th>
-                    <th>Precio</th>
-                    <th>Existencia</th>
+                    <th>Usuario</th>
+                    <th>Email</th>
+                    <th>Rol</th>
+                    <th>Estado</th>
+                    <th>Compras</th>
+                    <th>Total Gastado</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                {% for prod in productos %}
-                    <tr>
-                        <td>{{ prod.id }}</td>
-                        <td>{{ prod.nombre }}</td>
-                        <td>${{ "{:,.0f}".format(prod.precio) }}</td>
-                        <td>{{ prod.existencia }}</td>
-                    </tr>
+                {% for u in usuarios %}
+                <tr>
+                    <td>{{ u.id }}</td>
+                    <td>{{ u.nombre }}</td>
+                    <td>{{ u.nombre_usuario }}</td>
+                    <td style="font-size: 12px;">{{ u.email }}</td>
+                    <td>
+                        <span class="badge badge-{{ u.rol }}">{{ u.rol }}</span>
+                    </td>
+                    <td>
+                        <span class="badge badge-{{ 'activo' if u.activo else 'inactivo' }}">
+                            {{ 'Activo' if u.activo else 'Inactivo' }}
+                        </span>
+                    </td>
+                    <td style="text-align: center;">{{ u.num_compras }}</td>
+                    <td>${{ "{:,.0f}".format(u.total_gastado) }}</td>
+                    <td style="white-space: nowrap;">
+                        <!-- Cambiar Rol -->
+                        <form action="{{ url_for('admin_cambiar_rol') }}" method="POST" class="action-form-inline">
+                            <input type="hidden" name="usuario_id" value="{{ u.id }}">
+                            <select name="nuevo_rol" class="rol-select">
+                                <option value="cliente" {% if u.rol == 'cliente' %}selected{% endif %}>cliente</option>
+                                <option value="admin" {% if u.rol == 'admin' %}selected{% endif %}>admin</option>
+                                <option value="moderador" {% if u.rol == 'moderador' %}selected{% endif %}>moderador</option>
+                            </select>
+                            <button type="submit" class="btn-sm" style="margin-left: 4px;">✓ Rol</button>
+                        </form>
+                        <!-- Toggle Activo -->
+                        <form action="{{ url_for('admin_toggle_activo') }}" method="POST" class="action-form-inline" style="margin-top: 4px; display: block;">
+                            <input type="hidden" name="usuario_id" value="{{ u.id }}">
+                            <button type="submit" class="btn-sm" onclick="return confirm('¿Cambiar estado del usuario?');">
+                                {{ '🔒 Desactivar' if u.activo else '🔓 Activar' }}
+                            </button>
+                        </form>
+                        <!-- Eliminar -->
+                        <form action="{{ url_for('admin_eliminar_usuario') }}" method="POST" class="action-form-inline" style="margin-top: 4px; display: block;">
+                            <input type="hidden" name="usuario_id" value="{{ u.id }}">
+                            <button type="submit" class="btn-sm btn-sm-danger" onclick="return confirm('¿Eliminar usuario y todas sus compras? Esta acción es irreversible.');">
+                                🗑️ Eliminar
+                            </button>
+                        </form>
+                    </td>
+                </tr>
                 {% endfor %}
             </tbody>
         </table>
-        
-        
-        <div style="background-color: var(--card-bg); border: 1px solid var(--card-border); padding: 30px; border-radius: 6px; margin-top: 30px;">
-            <h3 style="margin-bottom: 20px; font-weight: 400; color: #dc3545;">Eliminar Producto</h3>
-            <form action="{{ url_for('admin_eliminar_producto') }}" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este producto?');">
-                <div class="form-group">
-                    <label for="id_to_delete" class="form-label">Seleccionar Producto a Eliminar</label>
-                    <select id="id_to_delete" name="id_to_delete" class="form-control" required style="height: 48px;">
-                        {% for prod in productos %}
-                            <option value="{{ prod.id }}">{{ prod.nombre }} (ID: {{ prod.id }})</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <button type="submit" class="submit-btn" style="width: auto; padding: 12px 30px; background-color: #dc3545;">Eliminar</button>
-            </form>
-        </div>
-    {% else %}
+        {% else %}
         <div class="info-alert">
-            <p class="info-alert-text">No hay productos en la base de datos.</p>
+            <p class="info-alert-text">No hay usuarios registrados.</p>
         </div>
-    {% endif %}
+        {% endif %}
+    </div>
+
+    <!-- ═══════════════ PANEL: COMPRAS ═══════════════ -->
+    <div class="admin-tab-panel" id="panel-compras">
+        <div class="section-header">
+            <h2 style="font-weight: 400; font-size: 20px;">Historial de Compras</h2>
+            <a href="{{ url_for('admin_pdf_compras') }}" class="pdf-btn">
+                📄 Descargar PDF Compras
+            </a>
+        </div>
+
+        {% if compras %}
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Usuario</th>
+                    <th>Email</th>
+                    <th>Fecha</th>
+                    <th>Total</th>
+                    <th>Estado</th>
+                    <th>Productos</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in compras %}
+                <tr>
+                    <td><strong>#{{ c.id }}</strong></td>
+                    <td>{{ c.usuario }}</td>
+                    <td style="font-size: 12px;">{{ c.email }}</td>
+                    <td style="font-size: 12px; white-space: nowrap;">{{ c.fecha }}</td>
+                    <td><strong>${{ "{:,.0f}".format(c.total) }}</strong></td>
+                    <td>
+                        <span class="badge badge-activo">{{ c.estado }}</span>
+                    </td>
+                    <td>
+                        <ul class="compra-detalle-list">
+                            {% for d in c.detalles %}
+                            <li>{{ d.nombre }} ×{{ d.cantidad }} — ${{ "{:,.0f}".format(d.subtotal) }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="info-alert">
+            <p class="info-alert-text">No hay compras registradas todavía.</p>
+        </div>
+        {% endif %}
+    </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function switchTab(name) {
+    // Ocultar todos los paneles
+    document.querySelectorAll('.admin-tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
+    // Mostrar el seleccionado
+    document.getElementById('panel-' + name).classList.add('active');
+    document.getElementById('tab-btn-' + name).classList.add('active');
+    // Guardar en URL hash
+    window.location.hash = name;
+}
+
+// Al cargar, revisar hash de URL para abrir el tab correcto
+window.addEventListener('DOMContentLoaded', () => {
+    const hash = window.location.hash.replace('#', '');
+    if (['productos', 'usuarios', 'compras'].includes(hash)) {
+        switchTab(hash);
+    }
+});
+</script>
 {% endblock %}

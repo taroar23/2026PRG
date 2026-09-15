@@ -8,9 +8,27 @@
     <h1 style="font-size: 50px; font-family: var(--font-serif); font-weight: 300; margin-bottom: 0;">Tendencias Actuales</h1>
 </section>
 
-<div class="info-alert">
-    <p class="info-alert-text">
-        ℹ️ Nuestros servidores están analizando las interacciones. Los artículos más buscados aparecerán aquí próximamente.
-    </p>
-</div>
+{% if productos %}
+    <div class="product-grid">
+        {% for prod in productos %}
+            <div class="product-card">
+                <a href="{{ url_for('detalle_producto', product_id=prod.id) }}" class="product-card-link" aria-label="Ver {{ prod.nombre }}">
+                    <div class="product-img-wrapper">
+                        <img src="{{ url_for('static', filename='imagenes/' ~ prod.imagen) }}" alt="{{ prod.nombre }}" class="product-card-img">
+                    </div>
+                    <div class="product-info-row">
+                        <div class="product-details">
+                            <p class="product-name">{{ prod.nombre }}</p>
+                            <p class="product-tag">Más buscado</p>
+                        </div>
+                        <div class="product-price">${{ "{:,.0f}".format(prod.precio) }}</div>
+                    </div>
+                </a>
+                <form action="{{ url_for('comprar_producto', product_id=prod.id) }}" method="POST">
+                    <button type="submit" class="buy-btn">Comprar</button>
+                </form>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
 {% endblock %}

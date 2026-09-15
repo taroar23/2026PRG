@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Voik — {{ producto.nombre }}{% endblock %}
+
+{% block content %}
+<section class="product-detail">
+    <div class="product-detail-image-panel">
+        <div class="product-detail-image-wrapper">
+            <img src="{{ url_for('static', filename='imagenes/' ~ producto.imagen) }}" alt="{{ producto.nombre }}" class="product-detail-img">
+        </div>
+    </div>
+
+    <div class="product-detail-info">
+        <p class="product-detail-eyebrow">Colección Voik</p>
+        <h1 class="product-detail-title">{{ producto.nombre }}</h1>
+        <p class="product-detail-description">Diseño cuidado, materiales seleccionados y la calidad que define nuestra colección.</p>
+
+        <div class="product-detail-price">${{ "{:,.0f}".format(producto.precio) }}</div>
+        <p class="product-detail-installments">Compra segura y envío disponible.</p>
+
+        <hr>
+
+        <div class="product-detail-stock">
+            <strong>Disponibilidad</strong>
+            <span>{{ producto.existencia }} unidades disponibles</span>
+        </div>
+
+        <form action="{{ url_for('comprar_producto', product_id=producto.id) }}" method="POST">
+            <button type="submit" class="buy-btn product-detail-buy">Agregar al carrito</button>
+        </form>
+
+        <a href="{{ url_for('galeria') }}" class="product-detail-back">Volver al catálogo</a>
+    </div>
+</section>
+{% endblock %}

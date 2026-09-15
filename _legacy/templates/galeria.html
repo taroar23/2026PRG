@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}Voik — Galería{% endblock %}
+{% block title %}Voik — Inicio{% endblock %}
 
 {% block content %}
 
 <section class="hero-section">
     <div class="hero-text">
-        <p class="hero-subtitle">Colección de Invierno 2024</p>
+        <p class="hero-subtitle">Colección de Invierno 2026</p>
         <h1 class="hero-title">La Serie</h1>
         <h1 class="hero-title">
             <span class="hero-title-italic">Obsidiana</span><span class="hero-title-bold">Oscura</span>
@@ -31,6 +31,7 @@
         <div class="product-grid">
             {% for prod in productos %}
                 <div class="product-card">
+                    <a href="{{ url_for('detalle_producto', product_id=prod.id) }}" class="product-card-link" aria-label="Ver {{ prod.nombre }}">
                     <div class="product-img-wrapper">
                         <img src="{{ url_for('static', filename='imagenes/' ~ prod.imagen) }}" alt="{{ prod.nombre }}" class="product-card-img">
                     </div>
@@ -43,6 +44,7 @@
                             ${{ "{:,.0f}".format(prod.precio) }}
                         </div>
                     </div>
+                    </a>
                     <form action="{{ url_for('comprar_producto', product_id=prod.id) }}" method="POST">
                         <button type="submit" class="buy-btn"><img src="{{ url_for('static', filename='imagenes/' ~ ('shopping-cartwhite.svg.svg' if not session.get('light_mode', True) else 'shopping-cart.svg.svg')) }}" alt="Comprar" data-icon-base="shopping-cart" style="width:16px; height:16px; vertical-align:middle; margin-right:6px;">Comprar</button>
                     </form>

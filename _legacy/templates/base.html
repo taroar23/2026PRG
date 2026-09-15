@@ -21,7 +21,7 @@
             <div class="logo-container">
                 <a href="/" class="logo-link">
                     
-                    <img src="{{ url_for('static', filename='imagenes/' ~ ('vk_white.png' if not session.get('light_mode', True) else 'vk_black.png')) }}" alt="VOIK Logo" class="logo-img" id="logo-img-el">
+                    <img src="{{ url_for('static', filename='imagenes/vk_black.png') }}" alt="VOIK Logo" class="logo-img" id="logo-main">
                     <span class="logo-brand-text">VOIK</span>
                 </a>
             </div>
@@ -29,7 +29,7 @@
             
             <nav class="main-nav">
                 <ul class="nav-links">
-                    <li><a href="/" class="nav-item-link {% if request.path == '/' or request.path == '/galeria' %}active{% endif %}">Galería</a></li>
+                    <li><a href="/" class="nav-item-link {% if request.path == '/' or request.path == '/galeria' %}active{% endif %}">Inicio</a></li>
                     <li><a href="/nuevo" class="nav-item-link {% if request.path == '/nuevo' %}active{% endif %}">Nuevo</a></li>
                     <li><a href="/tendencias" class="nav-item-link {% if request.path == '/tendencias' %}active{% endif %}">Tendencias</a></li>
                 </ul>
@@ -49,7 +49,13 @@
             
             <div class="user-menu-container">
                 <button class="user-popover-trigger" id="user-popover-btn">
-                    <img src="{{ url_for('static', filename='imagenes/' ~ ('userwhite.svg.svg' if not session.get('light_mode', True) else 'user.svg.svg')) }}" alt="Cuenta" data-icon-base="user" style="width:18px; height:18px; vertical-align:middle; margin-right:6px;"> Cuenta
+                    <!-- El icono de usuario con data-icon-base para que cambie con el tema -->
+                    <img src="{{ url_for('static', filename='imagenes/' ~ ('userwhite.svg.svg' if not session.get('light_mode', True) else 'user.svg.svg')) }}"
+                         alt="Cuenta"
+                         id="user-header-icon"
+                         data-icon-base="user"
+                         style="width:18px; height:18px; vertical-align:middle; margin-right:6px;">
+                    Cuenta
                 </button>
                 <div class="popover-menu" id="user-popover-menu">
                     <div class="popover-header">Menú</div>
@@ -97,23 +103,36 @@
 
     
     <script>
-        // Helper function to update all theme-aware icons with smooth transition
+        /**
+         * Actualiza todos los iconos con data-icon-base con una transición de opacidad
+         * en paralelo a la transición de color del tema (CSS).
+         * El fade dura 150ms (fade-out) + 150ms (fade-in) = 300ms total,
+         * mientras que el tema hace su transición CSS de 500ms en paralelo.
+         */
         function updateThemeIcons(isLight) {
             const icons = document.querySelectorAll('[data-icon-base]');
             icons.forEach(icon => {
                 const baseName = icon.getAttribute('data-icon-base');
                 const suffix = isLight ? '.svg.svg' : 'white.svg.svg';
                 const newSrc = `/static/imagenes/${baseName}${suffix}`;
-                
+
+                // Fade-out
                 icon.style.opacity = '0';
+                icon.style.transition = 'opacity 0.15s ease';
+
                 setTimeout(() => {
                     icon.src = newSrc;
+                    // Fade-in en paralelo al cambio de tema CSS
                     icon.style.opacity = '1';
+                    icon.style.transition = 'opacity 0.3s ease';
                 }, 150);
             });
+
+            // Logo: también cambia con el tema (invert via CSS en dark mode)
+            // No necesita cambio de src porque lo maneja el CSS con filter: invert(1)
         }
 
-        // User Popover Toggle
+        // ─── User Popover Toggle ───
         const popoverBtn = document.getElementById('user-popover-btn');
         const popoverMenu = document.getElementById('user-popover-menu');
         
@@ -130,39 +149,36 @@
             e.stopPropagation();
         });
 
-        // Theme Toggle Logic
+        // ─── Theme Toggle Logic ───
         const themeCheckbox = document.getElementById('theme-checkbox');
-        const logoImg = document.getElementById('logo-img-el');
         
         themeCheckbox.addEventListener('change', () => {
             const isLight = themeCheckbox.checked;
             
-            // Smooth logo transition
-            logoImg.style.opacity = '0';
-            setTimeout(() => {
-                if (isLight) {
-                    document.documentElement.removeAttribute('data-theme');
-                    logoImg.src = logoImg.src.replace('vk_white.png', 'vk_black.png');
-                } else {
-                    document.documentElement.setAttribute('data-theme', 'dark');
-                    logoImg.src = logoImg.src.replace('vk_black.png', 'vk_white.png');
-                }
-                logoImg.style.opacity = '1';
-            }, 150);
+            // Aplica el data-theme al <html> para que el CSS de transición actúe
+            if (isLight) {
+                document.documentElement.removeAttribute('data-theme');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
             
-            // Update all theme-aware icons
+            // Actualiza iconos EN PARALELO a la transición del tema
             updateThemeIcons(isLight);
             
-            // Sync con la sesión del servidor en background (sin recargar)
+            // Sync con sesión del servidor (sin recargar)
             fetch('/toggle-theme', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' }
             });
         });
         
-        // Initialize icons on page load
+        // ─── Inicializar iconos al cargar la página ───
         const initialLight = document.documentElement.getAttribute('data-theme') !== 'dark';
-        updateThemeIcons(initialLight);
+        // En la carga inicial NO hacemos fade (la página ya renderizó el src correcto via Jinja2)
+        // Solo aseguramos que están visibles
+        document.querySelectorAll('[data-icon-base]').forEach(icon => {
+            icon.style.opacity = '1';
+        });
     </script>
     {% block extra_js %}{% endblock %}
 </body>

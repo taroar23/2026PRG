@@ -14,6 +14,7 @@
     <div class="product-grid">
         {% for prod in productos %}
             <div class="product-card">
+                <a href="{{ url_for('detalle_producto', product_id=prod.id) }}" class="product-card-link" aria-label="Ver {{ prod.nombre }}">
                 <div class="product-img-wrapper">
                     <img src="{{ url_for('static', filename='imagenes/' ~ prod.imagen) }}" alt="{{ prod.nombre }}" class="product-card-img">
                 </div>
@@ -26,6 +27,7 @@
                         ${{ "{:,.0f}".format(prod.precio) }}
                     </div>
                 </div>
+                </a>
                 <form action="{{ url_for('comprar_producto', product_id=prod.id) }}" method="POST">
                     <button type="submit" class="buy-btn"><img src="{{ url_for('static', filename='imagenes/' ~ ('shopping-cartwhite.svg.svg' if not session.get('light_mode', True) else 'shopping-cart.svg.svg')) }}" alt="Ordenar" data-icon-base="shopping-cart" style="width:16px; height:16px; vertical-align:middle; margin-right:6px;">Ordenar</button>
                 </form>
