@@ -135,8 +135,11 @@ header.voik-header {
 
 .logo-img {
     height: 42px;
+    width: 42px;
+    object-fit: contain;
     display: block;
     flex-shrink: 0;
+    filter: none;
 }
 
 .logo-brand-text {
@@ -444,6 +447,11 @@ input:checked + .slider:before {
     margin-bottom: 20px;
 }
 
+.product-card-link {
+    display: block;
+    color: inherit;
+}
+
 .product-img-wrapper {
     overflow: hidden;
     margin-bottom: 15px;
@@ -506,6 +514,112 @@ input:checked + .slider:before {
 .buy-btn:hover {
     background-color: var(--button-hover-bg);
     transform: translateY(-2px);
+}
+
+.product-detail {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+    gap: 70px;
+    padding: 60px 0;
+    border-bottom: 1px solid var(--hr-color);
+}
+
+.product-detail-image-panel {
+    min-width: 0;
+}
+
+.product-detail-image-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 520px;
+    background-color: var(--card-bg);
+}
+
+.product-detail-img {
+    width: 100%;
+    max-height: 520px;
+    object-fit: contain;
+}
+
+.product-detail-info {
+    align-self: center;
+}
+
+.product-detail-eyebrow {
+    color: var(--text-muted);
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+}
+
+.product-detail-title {
+    font-family: var(--font-serif);
+    font-size: 48px;
+    font-weight: 300;
+    line-height: 1.1;
+    margin-bottom: 20px;
+}
+
+.product-detail-description,
+.product-detail-installments,
+.product-detail-stock {
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+.product-detail-price {
+    font-size: 30px;
+    font-weight: 600;
+    margin: 28px 0 6px;
+}
+
+.product-detail-info hr {
+    margin: 28px 0;
+}
+
+.product-detail-stock {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.product-detail-stock strong {
+    color: var(--text-color);
+}
+
+.product-detail-buy {
+    padding: 15px;
+}
+
+.product-detail-back {
+    display: inline-block;
+    margin-top: 22px;
+    color: var(--text-muted);
+    font-size: 13px;
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .product-detail {
+        grid-template-columns: 1fr;
+        gap: 35px;
+        padding: 40px 0;
+    }
+
+    .product-detail-image-wrapper {
+        min-height: 320px;
+    }
+
+    .product-detail-img {
+        max-height: 360px;
+    }
+
+    .product-detail-title {
+        font-size: 38px;
+    }
 }
 
 
