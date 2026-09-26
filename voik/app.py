@@ -29,6 +29,8 @@ app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'voik_monochrome_premium_secret_key_2026')
 
 
+import unicodedata
+
 def find_image_for_name(name):
     images_dir = os.path.join(base_dir, 'static', 'imagenes', 'productos')
     try:
@@ -37,12 +39,15 @@ def find_image_for_name(name):
         return 'imagenes/iconos/image.svg.svg'
 
     def norm(s):
-        return s.replace('"', '').replace("'", '').strip()
+        s = s.replace('"', '').replace("'", '').strip()
+        # Remove accents
+        s = unicodedata.normalize('NFKD', s).encode('ASCII', 'ignore').decode('utf-8')
+        return s
 
     name_clean = norm(name)
 
     for f in files:
-        if f.lower() == (name_clean + '.jpg').lower() or f.lower() == (name_clean + '.png').lower():
+        if norm(f).lower() == (name_clean + '.jpg').lower() or norm(f).lower() == (name_clean + '.png').lower():
             return 'productos/' + f
 
     variants = [
@@ -53,13 +58,13 @@ def find_image_for_name(name):
     ]
     for v in variants:
         for f in files:
-            if f.lower() == (v + '.jpg').lower() or f.lower() == (v + '.png').lower():
+            if norm(f).lower() == (v + '.jpg').lower() or norm(f).lower() == (v + '.png').lower():
                 return 'productos/' + f
 
     name_words = [w.lower() for w in name_clean.split() if len(w) > 1]
     best = (None, 0)
     for f in files:
-        fl = f.lower()
+        fl = norm(f).lower()
         score = sum(1 for w in name_words if w in fl)
         if score > best[1]:
             best = (f, score)
@@ -68,6 +73,7 @@ def find_image_for_name(name):
         return 'productos/' + best[0]
 
     return 'imagenes/iconos/image.svg.svg'
+
 
 
 # ─── PDF HELPERS ──────────────────────────────────────────────────────────────
