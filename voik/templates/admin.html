@@ -169,8 +169,8 @@
 
     <!-- TABS DE NAVEGACIÓN -->
     <div class="admin-tabs" id="adminTabs">
-        <button class="admin-tab-btn active" onclick="switchTab('productos')" id="tab-btn-productos">🏷️ Productos</button>
-        <button class="admin-tab-btn" onclick="switchTab('usuarios')" id="tab-btn-usuarios">👥 Usuarios</button>
+        <button class="admin-tab-btn active" onclick="switchTab('productos')" id="tab-btn-productos"><img src="{{ url_for('static', filename='imagenes/iconos/' ~ ('tagwhite.svg.svg' if not session.get('light_mode', True) else 'tag.svg.svg')) }}" data-icon-base="tag" style="width:16px; height:16px; vertical-align:middle; margin-right:6px;"> Productos</button>
+        <button class="admin-tab-btn" onclick="switchTab('usuarios')" id="tab-btn-usuarios"><img src="{{ url_for('static', filename='imagenes/iconos/' ~ ('userswhite.svg.svg' if not session.get('light_mode', True) else 'users.svg.svg')) }}" data-icon-base="users" style="width:16px; height:16px; vertical-align:middle; margin-right:6px;"> Usuarios</button>
         <button class="admin-tab-btn" onclick="switchTab('compras')" id="tab-btn-compras">🛒 Compras</button>
     </div>
 
@@ -185,7 +185,7 @@
 
         <!-- Agregar producto -->
         <div style="background: var(--card-bg); border: 1px solid var(--card-border); padding: 30px; border-radius: 8px; margin-bottom: 30px;">
-            <h3 style="margin-bottom: 20px; font-weight: 500; font-size: 16px;">➕ Agregar Nuevo Producto</h3>
+            <h3 style="margin-bottom: 20px; font-weight: 500; font-size: 16px;"><img src="{{ url_for('static', filename='imagenes/iconos/' ~ ('pluswhite.svg.svg' if not session.get('light_mode', True) else 'plus.svg.svg')) }}" data-icon-base="plus" style="width:16px; height:16px; vertical-align:middle; margin-right:6px;"> Agregar Nuevo Producto</h3>
             <form action="{{ url_for('admin_agregar_producto') }}" method="POST">
                 <div class="form-group">
                     <label for="prod_nombre" class="form-label">Nombre del Producto</label>
@@ -231,7 +231,7 @@
 
             <!-- Eliminar producto -->
             <div style="background: var(--card-bg); border: 1px solid var(--card-border); padding: 30px; border-radius: 8px; margin-top: 10px;">
-                <h3 style="margin-bottom: 20px; font-weight: 500; font-size: 16px; color: #dc3545;">🗑️ Eliminar Producto</h3>
+                <h3 style="margin-bottom: 20px; font-weight: 500; font-size: 16px; color: #dc3545;"><img src="{{ url_for('static', filename='imagenes/iconos/' ~ ('trashwhite.svg.svg' if not session.get('light_mode', True) else 'trash.svg.svg')) }}" data-icon-base="trash" style="width:16px; height:16px; vertical-align:middle; margin-right:6px;"> Eliminar Producto</h3>
                 <form action="{{ url_for('admin_eliminar_producto') }}" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar este producto?');">
                     <div class="form-group">
                         <label for="id_to_delete" class="form-label">Seleccionar Producto a Eliminar</label>
@@ -307,14 +307,18 @@
                         <form action="{{ url_for('admin_toggle_activo') }}" method="POST" class="action-form-inline" style="margin-top: 4px; display: block;">
                             <input type="hidden" name="usuario_id" value="{{ u.id }}">
                             <button type="submit" class="btn-sm" onclick="return confirm('¿Cambiar estado del usuario?');">
-                                {{ '🔒 Desactivar' if u.activo else '🔓 Activar' }}
+                                {% if u.activo %}
+    <img src="{{ url_for('static', filename='imagenes/iconos/' ~ ('lockwhite.svg.svg' if not session.get('light_mode', True) else 'lock.svg.svg')) }}" data-icon-base="lock" style="width:14px; height:14px; vertical-align:middle; margin-right:4px;"> Desactivar
+{% else %}
+    <img src="{{ url_for('static', filename='imagenes/iconos/' ~ ('lockwhite.svg.svg' if not session.get('light_mode', True) else 'lock.svg.svg')) }}" data-icon-base="lock" style="width:14px; height:14px; vertical-align:middle; margin-right:4px;"> Activar
+{% endif %}
                             </button>
                         </form>
                         <!-- Eliminar -->
                         <form action="{{ url_for('admin_eliminar_usuario') }}" method="POST" class="action-form-inline" style="margin-top: 4px; display: block;">
                             <input type="hidden" name="usuario_id" value="{{ u.id }}">
                             <button type="submit" class="btn-sm btn-sm-danger" onclick="return confirm('¿Eliminar usuario y todas sus compras? Esta acción es irreversible.');">
-                                🗑️ Eliminar
+                                <img src="{{ url_for('static', filename='imagenes/iconos/' ~ ('trashwhite.svg.svg' if not session.get('light_mode', True) else 'trash.svg.svg')) }}" data-icon-base="trash" style="width:16px; height:16px; vertical-align:middle; margin-right:6px;"> Eliminar
                             </button>
                         </form>
                     </td>
