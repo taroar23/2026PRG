@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Voik — Inicio{% endblock %}
+
+{% block content %}
+
+<section class="hero-section">
+    <div class="hero-text">
+        <p class="hero-subtitle">Colección de Invierno 2026</p>
+        <h1 class="hero-title">La Serie</h1>
+        <h1 class="hero-title">
+            <span class="hero-title-italic">Obsidiana </span><span class="hero-title-bold">Oscura</span>
+        </h1>
+        <p class="hero-desc">
+            Hardware minimalista diseñado para el santuario moderno. Diseños atemporales para la vida contemporánea.
+        </p>
+        <button class="hero-btn" onclick="document.getElementById('catalogo').scrollIntoView({behavior: 'smooth'});">VER COLECCIÓN</button>
+    </div>
+    <div class="hero-image-container">
+        <img src="{{ url_for('static', filename='imagenes/inicio/hero_macbook.jpg') }}" alt="Obsidiana Oscura Hero" class="hero-img">
+    </div>
+</section>
+
+<hr>
+
+
+<section id="catalogo" style="padding-top: 40px;">
+    <h3 class="section-title">Catálogo Principal</h3>
+
+    {% if productos %}
+        <div class="product-grid">
+            {% for prod in productos %}
+                <div class="product-card">
+                    <a href="{{ url_for('detalle_producto', product_id=prod.id) }}" class="product-card-link" aria-label="Ver {{ prod.nombre }}">
+                    <div class="product-img-wrapper">
+                        <img src="{{ url_for('static', filename='imagenes/' ~ prod.imagen) }}" alt="{{ prod.nombre }}" class="product-card-img">
+                    </div>
+                    <div class="product-info-row">
+                        <div class="product-details">
+                            <p class="product-name">{{ prod.nombre }}</p>
+                            <p class="product-tag">Exclusivo Web</p>
+                        </div>
+                        <div class="product-price">
+                            ${{ "{:,.0f}".format(prod.precio) }}
+                        </div>
+                    </div>
+                    </a>
+                    <form action="{{ url_for('comprar_producto', product_id=prod.id) }}" method="POST">
+                        <button type="submit" class="buy-btn"><img src="{{ url_for('static', filename='imagenes/iconos/' ~ ('shopping-cartwhite.svg.svg' if not session.get('light_mode', True) else 'shopping-cart.svg.svg')) }}" alt="Comprar" data-icon-base="shopping-cart" style="width:16px; height:16px; vertical-align:middle; margin-right:6px;">Comprar</button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="info-alert">
+            <p class="info-alert-text">No hay productos disponibles actualmente.</p>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

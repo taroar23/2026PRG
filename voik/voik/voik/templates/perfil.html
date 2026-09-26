@@ -1,0 +1,533 @@
+{% extends "base.html" %}
+
+{% block title %}Voik — Perfil{% endblock %}
+
+{% block extra_css %}
+<style>
+.avatar-wrapper {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 12px;
+}
+.avatar-img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--card-border);
+}
+.avatar-circle {
+    display: inline-flex;
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, #1a1b1e 0%, #444 100%);
+    color: #fff;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    font-weight: 300;
+}
+
+/* Edit info modal */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+}
+.modal-overlay.show { display: flex; }
+.modal-box {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 36px;
+    width: 100%;
+    max-width: 460px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    position: relative;
+}
+.modal-close {
+    position: absolute;
+    top: 14px; right: 18px;
+    background: none; border: none;
+    font-size: 22px; cursor: pointer;
+    color: var(--text-muted);
+    line-height: 1;
+}
+.modal-close:hover { color: var(--text-color); }
+.modal-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 24px;
+}
+
+/* Photo upload zone */
+.photo-upload-zone {
+    border: 2px dashed var(--card-border);
+    border-radius: 8px;
+    padding: 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s !important;
+    margin-bottom: 16px;
+}
+.photo-upload-zone:hover { border-color: var(--text-color); }
+.photo-upload-zone p { font-size: 13px; color: var(--text-muted); margin-top: 8px; }
+
+/* Historial de compras */
+.purchase-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    margin-bottom: 16px;
+    overflow: hidden;
+}
+.purchase-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 20px;
+    background: var(--table-header-bg);
+    cursor: pointer;
+    user-select: none;
+}
+.purchase-card-header:hover { opacity: 0.85; }
+.purchase-card-body {
+    padding: 16px 20px;
+    border-top: 1px solid var(--card-border);
+    display: none;
+}
+.purchase-card-body.open { display: block; }
+.purchase-item-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--hr-color);
+}
+.purchase-item-row:last-child { border-bottom: none; }
+.purchase-badge {
+    background: #d4edda;
+    color: #155724;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="profile-header">
+    <div class="avatar-wrapper">
+        {% set initial = user.nombre[0].upper() if user.nombre and user.nombre|length > 0 else 'U' %}
+        {% if user.foto_perfil %}
+            <img id="avatar-img-header" src="{{ user.foto_perfil }}" alt="Foto de perfil" class="avatar-img" onerror="document.getElementById('avatar-img-header').style.display='none'; document.getElementById('avatar-circle-header').style.display='flex'">
+            <div id="avatar-circle-header" class="avatar-circle" style="display:none;">
+                {{ initial }}
+            </div>
+        {% else %}
+            <div class="avatar-circle">
+                {{ initial }}
+            </div>
+        {% endif %}
+    </div>
+    <h2>{{ user.nombre }}</h2>
+    <p class="profile-email">{{ user.email }}</p>
+</div>
+
+
+<div class="profile-layout">
+    
+    <aside class="profile-sidebar">
+        {% set active_tab = request.args.get('tab', 'Inicio') %}
+        
+        <button class="profile-menu-item {% if active_tab == 'Inicio' %}active{% endif %}" onclick="location.href='/perfil?tab=Inicio'">
+            <img src="{{ url_for('static', filename='imagenes/' ~ ('userwhite.svg.svg' if not session.get('light_mode', True) else 'user.svg.svg')) }}" data-icon-base="user" style="width: 18px; height: 18px;">
+            <span>Mi Cuenta</span>
+        </button>
+        
+        <button class="profile-menu-item {% if active_tab == 'Guardado' %}active{% endif %}" onclick="location.href='/perfil?tab=Guardado'">
+            <img src="{{ url_for('static', filename='imagenes/' ~ ('heartwhite.svg.svg' if not session.get('light_mode', True) else 'heart.svg.svg')) }}" data-icon-base="heart" style="width: 18px; height: 18px;">
+            <span>Guardado</span>
+        </button>
+        
+        <button class="profile-menu-item {% if active_tab == 'Cuotas' %}active{% endif %}" onclick="location.href='/perfil?tab=Cuotas'">
+            <img src="{{ url_for('static', filename='imagenes/' ~ ('banknotewhite.svg.svg' if not session.get('light_mode', True) else 'banknote.svg.svg')) }}" data-icon-base="banknote" style="width: 18px; height: 18px;">
+            <span>Cuotas</span>
+        </button>
+        
+        <button class="profile-menu-item {% if active_tab == 'Suscripciones' %}active{% endif %}" onclick="location.href='/perfil?tab=Suscripciones'">
+            <img src="{{ url_for('static', filename='imagenes/' ~ ('credit-cardwhite.svg.svg' if not session.get('light_mode', True) else 'credit-card.svg.svg')) }}" data-icon-base="credit-card" style="width: 18px; height: 18px;">
+            <span>Suscripciones</span>
+        </button>
+        
+        <button class="profile-menu-item {% if active_tab == 'Historial' %}active{% endif %}" onclick="location.href='/perfil?tab=Historial'">
+            <img src="{{ url_for('static', filename='imagenes/' ~ ('clipboard-listwhite.svg.svg' if not session.get('light_mode', True) else 'clipboard-list.svg.svg')) }}" data-icon-base="clipboard-list" style="width: 18px; height: 18px;">
+            <span>Historial de pedidos</span>
+        </button>
+        
+        <button class="profile-menu-item {% if active_tab == 'Configuracion' %}active{% endif %}" onclick="location.href='/perfil?tab=Configuracion'">
+            <img src="{{ url_for('static', filename='imagenes/' ~ ('settingswhite.svg.svg' if not session.get('light_mode', True) else 'settings.svg.svg')) }}" data-icon-base="settings" style="width: 18px; height: 18px;">
+            <span>Configuración</span>
+        </button>
+        
+        <button class="profile-menu-item {% if active_tab == 'Ayuda' %}active{% endif %}" onclick="location.href='/perfil?tab=Ayuda'">
+            <img src="{{ url_for('static', filename='imagenes/' ~ ('circle-question-markwhite.svg.svg' if not session.get('light_mode', True) else 'circle-question-mark.svg.svg')) }}" data-icon-base="circle-question-mark" style="width: 18px; height: 18px;">
+            <span>Ayuda</span>
+        </button>
+    </aside>
+
+    
+    <section class="profile-content">
+        {% if active_tab == 'Inicio' %}
+            
+            <div class="dark-card">
+                <div class="dark-card-icon">
+                    <img src="{{ url_for('static', filename='imagenes/credit-card' + ('white' if not session.get('light_mode', True) else '') + '.svg.svg') }}" data-icon-base="credit-card" style="width: 60px; height: 60px;">
+                </div>
+                <h3 class="dark-card-title">Paga más rápido</h3>
+                <p class="dark-card-text">Ingresa y verifica un número de teléfono para pagar más rápido en millones de tiendas</p>
+                <button class="hero-btn" onclick="location.href='/perfil?tab=PagarRapido'" style="width: 100%;">Agregar teléfono</button>
+            </div>
+            
+            <div class="quick-cards">
+                <div class="dark-card" onclick="location.href='/perfil?tab=Guardado'" style="cursor: pointer; margin-bottom: 0;">
+                    <div class="dark-card-icon">
+                        <img src="{{ url_for('static', filename='imagenes/heart' + ('white' if not session.get('light_mode', True) else '') + '.svg.svg') }}" data-icon-base="heart" style="width: 50px; height: 50px;">
+                    </div>
+                    <h4 class="dark-card-title">Guardado</h4>
+                    <button class="buy-btn" style="margin-top: 15px;">Ver guardados</button>
+                </div>
+                
+                <div class="dark-card" style="margin-bottom: 0;">
+                    <div class="dark-card-icon">
+                        <img src="{{ url_for('static', filename='imagenes/van' + ('white' if not session.get('light_mode', True) else '') + '.svg.svg') }}" data-icon-base="van" style="width: 50px; height: 50px;">
+                    </div>
+                    <h4 class="dark-card-title">Envíos</h4>
+                    <p class="dark-card-text" style="font-size: 11px; margin-top: 10px;">Sin envíos pendientes</p>
+                </div>
+            </div>
+            
+        {% elif active_tab == 'Guardado' %}
+            
+            <h2><img src="{{ url_for('static', filename='imagenes/' ~ ('heartwhite.svg.svg' if not session.get('light_mode', True) else 'heart.svg.svg')) }}" alt="Guardado" data-icon-base="heart" style="width:20px; height:20px; vertical-align:middle; margin-right:6px;">Productos Guardados</h2>
+            <hr>
+            <div class="info-alert">
+                <p class="info-alert-text">Aquí aparecerán los productos que hayas marcado como favoritos.</p>
+                <p class="info-alert-text" style="margin-top: 10px; color: var(--text-muted);">Actualmente no tienes productos guardados.</p>
+            </div>
+            
+        {% elif active_tab == 'Cuotas' %}
+            
+            <h2><img src="{{ url_for('static', filename='imagenes/' ~ ('credit-cardwhite.svg.svg' if not session.get('light_mode', True) else 'credit-card.svg.svg')) }}" alt="Cuotas" data-icon-base="credit-card" style="width:20px; height:20px; vertical-align:middle; margin-right:6px;">Cuotas</h2>
+            <hr>
+            <div class="info-alert">
+                <p class="info-alert-text">Sistema de cuotas sin interés y planes de pago.</p>
+                <p class="info-alert-text" style="margin-top: 10px; color: var(--text-muted);">Actualmente no tienes cuotas activas.</p>
+            </div>
+            
+        {% elif active_tab == 'Suscripciones' %}
+            
+            <h2>Suscripciones</h2>
+            <hr>
+            <div class="info-alert">
+                <p class="info-alert-text">Gestiona tus suscripciones y membresías.</p>
+                <p class="info-alert-text" style="margin-top: 10px; color: var(--text-muted);">Actualmente no tienes suscripciones activas.</p>
+            </div>
+            
+        {% elif active_tab == 'Historial' %}
+            
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+                <h2 style="margin: 0;">
+                    <img src="{{ url_for('static', filename='imagenes/' ~ ('clipboard-listwhite.svg.svg' if not session.get('light_mode', True) else 'clipboard-list.svg.svg')) }}" alt="Historial" data-icon-base="clipboard-list" style="width:20px; height:20px; vertical-align:middle; margin-right:6px;">
+                    Historial de Pedidos
+                </h2>
+                <a href="{{ url_for('perfil_pdf_historial') }}" 
+                   style="display:inline-flex; align-items:center; gap:6px; padding:8px 18px; background:var(--button-primary-bg); color:var(--button-primary-text); border-radius:4px; font-size:13px; font-weight:600; text-decoration:none;">
+                    📄 Descargar PDF
+                </a>
+            </div>
+            <hr>
+
+            {% if compras %}
+                {% for compra in compras %}
+                <div class="purchase-card">
+                    <div class="purchase-card-header" onclick="togglePurchase({{ compra.id }})">
+                        <div>
+                            <strong>Compra #{{ compra.id }}</strong>
+                            <span style="margin-left: 14px; font-size: 12px; color: var(--text-muted);">{{ compra.fecha }}</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <strong>${{ "{:,.0f}".format(compra.total) }}</strong>
+                            <span class="purchase-badge">{{ compra.estado }}</span>
+                            <span id="arrow-{{ compra.id }}">▼</span>
+                        </div>
+                    </div>
+                    <div class="purchase-card-body" id="purchase-body-{{ compra.id }}">
+                        {% for item in compra.detalles %}
+                        <div class="purchase-item-row">
+                            <span>{{ item.nombre }} <span style="color: var(--text-muted);">× {{ item.cantidad }}</span></span>
+                            <span>${{ "{:,.0f}".format(item.subtotal) }}</span>
+                        </div>
+                        {% endfor %}
+                        <div style="text-align: right; margin-top: 12px; font-weight: 600;">
+                            Total: ${{ "{:,.0f}".format(compra.total) }}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="info-alert">
+                    <p class="info-alert-text">Aquí aparecerán tus compras anteriores.</p>
+                    <p class="info-alert-text" style="margin-top: 10px; color: var(--text-muted);">Actualmente no tienes pedidos registrados.</p>
+                </div>
+            {% endif %}
+            
+        {% elif active_tab == 'PagarRapido' %}
+            
+            <h2>Paga Más Rápido</h2>
+            <hr>
+            <p style="margin-bottom: 20px; font-size: 14px;">Ingresa y verifica un número de teléfono para pagar más rápido en millones de tiendas.</p>
+            
+            <div class="dark-card" style="max-width: 500px; margin: 0 auto 30px auto;">
+                <div class="dark-card-icon"></div>
+                <h4 class="dark-card-title">Paga más rápido</h4>
+                <p class="dark-card-text">Ingresa y verifica un número de teléfono para pagar más rápido en millones de tiendas</p>
+            </div>
+            
+            <form action="{{ url_for('perfil_add_phone') }}" method="POST" style="max-width: 500px; margin: 0 auto;">
+                <div class="form-group">
+                    <label for="phone" class="form-label">Número de Teléfono</label>
+                    <input type="tel" id="phone" name="phone" class="form-control" placeholder="Ingresa tu número de teléfono" required>
+                </div>
+                <button type="submit" class="submit-btn">Agregar teléfono</button>
+            </form>
+            
+        {% elif active_tab == 'Configuracion' %}
+            
+            <h2>
+                <img src="{{ url_for('static', filename='imagenes/' ~ ('settingswhite.svg.svg' if not session.get('light_mode', True) else 'settings.svg.svg')) }}" alt="Configuración" data-icon-base="settings" style="width:20px; height:20px; vertical-align:middle; margin-right:6px;">
+                Configuración
+            </h2>
+            <hr>
+            
+            <!-- ══ SECCIÓN: FOTO DE PERFIL ══ -->
+            <h3 style="margin: 20px 0 14px 0; font-size: 15px;">Foto de Perfil</h3>
+            <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 24px;">
+                {% set initial = user.nombre[0].upper() if user.nombre and user.nombre|length > 0 else 'U' %}
+                {% if user.foto_perfil %}
+                    <img id="avatar-img-config" src="{{ user.foto_perfil }}" alt="Foto actual" style="width:60px; height:60px; border-radius:50%; object-fit:cover; border:2px solid var(--card-border);" onerror="document.getElementById('avatar-img-config').style.display='none'; document.getElementById('avatar-circle-config').style.display='flex'">
+                    <div id="avatar-circle-config" class="avatar-circle" style="display:none; width:60px; height:60px; font-size:22px;">
+                        {{ initial }}
+                    </div>
+                {% else %}
+                    <div class="avatar-circle" style="width:60px; height:60px; font-size:22px;">
+                        {{ initial }}
+                    </div>
+                {% endif %}
+                <button type="button" class="buy-btn" style="width: auto; padding: 10px 20px;" onclick="document.getElementById('modal-foto').classList.add('show')">
+                    📷 Cambiar foto
+                </button>
+            </div>
+
+            <!-- ══ SECCIÓN: INFORMACIÓN PERSONAL ══ -->
+            <h3 style="margin: 0 0 14px 0; font-size: 15px;">Información Personal</h3>
+            <div style="background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; padding: 24px; margin-bottom: 24px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; font-size: 13px; color: var(--text-muted);">
+                    <div>
+                        <strong style="color: var(--text-color);">Nombre actual:</strong><br>{{ user.nombre }}
+                    </div>
+                    <div>
+                        <strong style="color: var(--text-color);">Usuario actual:</strong><br>{{ user.nombre_usuario }}
+                    </div>
+                    <div style="grid-column: span 2;">
+                        <strong style="color: var(--text-color);">Email actual:</strong><br>{{ user.email }}
+                    </div>
+                </div>
+                <button type="button" class="buy-btn" style="width: auto; padding: 10px 20px;" onclick="document.getElementById('modal-info').classList.add('show')">
+                    <img src="{{ url_for('static', filename='imagenes/' ~ ('user-penwhite.svg.svg' if not session.get('light_mode', True) else 'user-pen.svg.svg')) }}" alt="Editar" data-icon-base="user-pen" style="width:15px; height:15px; vertical-align:middle; margin-right:6px;">
+                    Editar Información
+                </button>
+            </div>
+
+            <!-- ══ SECCIÓN: SEGURIDAD ══ -->
+            <h3 style="margin: 0 0 14px 0; font-size: 15px;">Seguridad</h3>
+            <div class="expander-panel">
+                <div class="expander-header" onclick="document.getElementById('pass-expander-body').style.display = document.getElementById('pass-expander-body').style.display === 'block' ? 'none' : 'block';">
+                    <span>Cambiar Contraseña</span>
+                    <span>▼</span>
+                </div>
+                <div class="expander-body" id="pass-expander-body" style="display: none;">
+                    <form action="{{ url_for('perfil_change_password') }}" method="POST">
+                        <div class="form-group">
+                            <label for="current_pwd" class="form-label">Contraseña Actual</label>
+                            <input type="password" id="current_pwd" name="current_pwd" class="form-control" required autocomplete="current-password">
+                        </div>
+                        <div class="form-group">
+                            <label for="new_pwd" class="form-label">Nueva Contraseña</label>
+                            <input type="password" id="new_pwd" name="new_pwd" class="form-control" required autocomplete="new-password">
+                        </div>
+                        <div class="form-group">
+                            <label for="confirm_pwd" class="form-label">Confirmar Contraseña</label>
+                            <input type="password" id="confirm_pwd" name="confirm_pwd" class="form-control" required autocomplete="new-password">
+                        </div>
+                        <button type="submit" class="submit-btn">Cambiar Contraseña</button>
+                    </form>
+                </div>
+            </div>
+            
+            <h3 style="margin-top: 24px; font-size: 15px;">Sesión</h3>
+            <button class="buy-btn" onclick="location.href='/logout'" style="margin-top: 10px; border-color: #dc3545; color: #dc3545; background-color: transparent; width: auto; padding: 10px 24px;">
+                Cerrar Sesión
+            </button>
+            
+        {% elif active_tab == 'Ayuda' %}
+            
+            <h2><img src="{{ url_for('static', filename='imagenes/' ~ ('circle-question-markwhite.svg.svg' if not session.get('light_mode', True) else 'circle-question-mark.svg.svg')) }}" alt="Ayuda" data-icon-base="circle-question-mark" style="width:20px; height:20px; vertical-align:middle; margin-right:6px;">Ayuda y Soporte</h2>
+            <hr>
+            <p style="margin-bottom: 20px; font-weight: bold;">Preguntas Frecuentes</p>
+            
+            <div class="expander-panel">
+                <div class="expander-header" onclick="toggleFAQ(1)">
+                    <span>¿Cómo cambio mi información personal?</span>
+                    <span>▼</span>
+                </div>
+                <div class="expander-body" id="faq-1" style="display: none;">
+                    Ve a Configuración > haz clic en "Editar Información" para actualizar tu nombre, usuario y correo electrónico.
+                </div>
+            </div>
+            
+            <div class="expander-panel">
+                <div class="expander-header" onclick="toggleFAQ(2)">
+                    <span>¿Cómo cambio mi foto de perfil?</span>
+                    <span>▼</span>
+                </div>
+                <div class="expander-body" id="faq-2" style="display: none;">
+                    Ve a Configuración > sección "Foto de Perfil" y haz clic en "Cambiar foto" para subir una nueva imagen (PNG, JPG o GIF, máx. 2MB).
+                </div>
+            </div>
+            
+            <div class="expander-panel">
+                <div class="expander-header" onclick="toggleFAQ(3)">
+                    <span>¿Cómo agrego un número de teléfono?</span>
+                    <span>▼</span>
+                </div>
+                <div class="expander-body" id="faq-3" style="display: none;">
+                    Ve a Paga más rápido e ingresa tu número de teléfono verificado.
+                </div>
+            </div>
+            
+            <div class="expander-panel">
+                <div class="expander-header" onclick="toggleFAQ(4)">
+                    <span>¿Cómo cierro mi sesión?</span>
+                    <span>▼</span>
+                </div>
+                <div class="expander-body" id="faq-4" style="display: none;">
+                    Ve a Configuración > Sesión y haz clic en Cerrar Sesión.
+                </div>
+            </div>
+            
+            <div class="expander-panel">
+                <div class="expander-header" onclick="toggleFAQ(5)">
+                    <span>¿Cómo veo mis compras anteriores?</span>
+                    <span>▼</span>
+                </div>
+                <div class="expander-body" id="faq-5" style="display: none;">
+                    Ve a "Historial de pedidos" en el menú lateral. Podrás ver todas tus compras y descargar un PDF con el detalle completo.
+                </div>
+            </div>
+        {% endif %}
+    </section>
+</div>
+
+
+<!-- ══ MODAL: Editar Información Personal ══ -->
+<div class="modal-overlay" id="modal-info" onclick="if(event.target===this)this.classList.remove('show')">
+    <div class="modal-box">
+        <button class="modal-close" onclick="document.getElementById('modal-info').classList.remove('show')">✕</button>
+        <p class="modal-title">✏️ Editar Información Personal</p>
+        <form action="{{ url_for('perfil_update_info') }}" method="POST">
+            <div class="form-group">
+                <label for="nuevo_nombre" class="form-label">Nuevo Nombre</label>
+                <input type="text" id="nuevo_nombre" name="nuevo_nombre" class="form-control"
+                       placeholder="{{ user.nombre }}" value="{{ user.nombre }}">
+            </div>
+            <div class="form-group">
+                <label for="nuevo_username" class="form-label">Nuevo Nombre de Usuario</label>
+                <input type="text" id="nuevo_username" name="nuevo_username" class="form-control"
+                       placeholder="{{ user.nombre_usuario }}" value="{{ user.nombre_usuario }}">
+            </div>
+            <div class="form-group">
+                <label for="nuevo_email" class="form-label">Nuevo Correo Electrónico</label>
+                <input type="email" id="nuevo_email" name="nuevo_email" class="form-control"
+                       placeholder="{{ user.email }}" value="{{ user.email }}">
+            </div>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">
+                Solo se actualizarán los campos que modifiques.
+            </p>
+            <button type="submit" class="submit-btn">Guardar Cambios</button>
+        </form>
+    </div>
+</div>
+
+<!-- ══ MODAL: Cambiar Foto de Perfil ══ -->
+<div class="modal-overlay" id="modal-foto" onclick="if(event.target===this)this.classList.remove('show')">
+    <div class="modal-box">
+        <button class="modal-close" onclick="document.getElementById('modal-foto').classList.remove('show')">✕</button>
+        <p class="modal-title">📷 Cambiar Foto de Perfil</p>
+        <form action="{{ url_for('perfil_update_photo') }}" method="POST" enctype="multipart/form-data">
+            <div class="photo-upload-zone" onclick="document.getElementById('foto-input').click()">
+                <div style="font-size: 40px;">🖼️</div>
+                <p>Haz clic para seleccionar una imagen</p>
+                <p style="font-size: 11px; margin-top: 4px;">PNG, JPG, GIF, WEBP — máximo 2 MB</p>
+            </div>
+            <input type="file" id="foto-input" name="foto_perfil" accept="image/*"
+                   style="display:none;" onchange="previewPhoto(this)">
+            <div id="foto-preview-wrap" style="display:none; text-align:center; margin-bottom:14px;">
+                <img id="foto-preview" src="" alt="Vista previa"
+                     style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:2px solid var(--card-border);">
+                <p id="foto-preview-name" style="font-size:12px; color:var(--text-muted); margin-top:6px;"></p>
+            </div>
+            <button type="submit" class="submit-btn">Subir Foto</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function toggleFAQ(id) {
+        const body = document.getElementById('faq-' + id);
+        body.style.display = body.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function togglePurchase(id) {
+        const body = document.getElementById('purchase-body-' + id);
+        const arrow = document.getElementById('arrow-' + id);
+        const isOpen = body.classList.toggle('open');
+        arrow.textContent = isOpen ? '▲' : '▼';
+    }
+
+    function previewPhoto(input) {
+        const file = input.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.getElementById('foto-preview');
+            const wrap = document.getElementById('foto-preview-wrap');
+            const name = document.getElementById('foto-preview-name');
+            preview.src = e.target.result;
+            name.textContent = file.name;
+            wrap.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+</script>
+{% endblock %}

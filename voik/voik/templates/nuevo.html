@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Voik — Nuevo{% endblock %}
+
+{% block content %}
+<section style="padding: 60px 0; text-align: center;">
+    <h1 style="font-size: 50px; font-family: var(--font-serif); font-weight: 300; margin-bottom: 20px;">Lanzamientos Recientes</h1>
+    <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto; font-size: 15px; line-height: 1.6;">
+        Descubre nuestras últimas integraciones a la colección principal. Innovación tecnológica envuelta en siluetas silenciosas.
+    </p>
+</section>
+
+{% if productos %}
+    <div class="product-grid">
+        {% for prod in productos %}
+            <div class="product-card">
+                <a href="{{ url_for('detalle_producto', product_id=prod.id) }}" class="product-card-link" aria-label="Ver {{ prod.nombre }}">
+                <div class="product-img-wrapper">
+                    <img src="{{ url_for('static', filename='imagenes/' ~ prod.imagen) }}" alt="{{ prod.nombre }}" class="product-card-img">
+                </div>
+                <div class="product-info-row">
+                    <div class="product-details">
+                        <p class="product-name">{{ prod.nombre }}</p>
+                        <p class="product-tag">Lanzamiento Exclusivo</p>
+                    </div>
+                    <div class="product-price">
+                        ${{ "{:,.0f}".format(prod.precio) }}
+                    </div>
+                </div>
+                </a>
+                <form action="{{ url_for('comprar_producto', product_id=prod.id) }}" method="POST">
+                    <button type="submit" class="buy-btn"><img src="{{ url_for('static', filename='imagenes/iconos/' ~ ('shopping-cartwhite.svg.svg' if not session.get('light_mode', True) else 'shopping-cart.svg.svg')) }}" alt="Ordenar" data-icon-base="shopping-cart" style="width:16px; height:16px; vertical-align:middle; margin-right:6px;">Ordenar</button>
+                </form>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="info-alert">
+        <p class="info-alert-text">Vuelve pronto para ver la nueva colección.</p>
+    </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Voik — Registrarse{% endblock %}
+
+{% block content %}
+<div class="form-container-centered">
+    <h2 class="form-title">Crear Cuenta Nueva</h2>
+    
+    <form action="{{ url_for('registro') }}" method="POST">
+        <div class="form-group">
+            <label for="nombre" class="form-label">Nombre Completo</label>
+            <input type="text" id="nombre" name="nombre" class="form-control" placeholder="John Doe" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="email" class="form-label">Correo Electrónico</label>
+            <input type="email" id="email" name="email" class="form-control" placeholder="correo@ejemplo.com" required autocomplete="email">
+        </div>
+        
+        <div class="form-group">
+            <label for="username" class="form-label">Nombre de Usuario</label>
+            <input type="text" id="username" name="username" class="form-control" placeholder="johndoe" required autocomplete="username">
+        </div>
+        
+        <div class="form-group">
+            <label for="password" class="form-label">Contraseña</label>
+            <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required autocomplete="new-password">
+        </div>
+        
+        <button type="submit" class="submit-btn">Registrarse</button>
+    </form>
+    
+    <p class="form-link-text">
+        ¿Ya tienes cuenta? <a href="/login">Iniciar Sesión</a>
+    </p>
+</div>
+{% endblock %}
