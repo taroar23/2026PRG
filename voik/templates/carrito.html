@@ -35,7 +35,10 @@
                         <td>${{ "{:,.0f}".format(item.precio * item.qty) }}</td>
                         <td>
                             <form action="{{ url_for('eliminar_carrito', product_id=item.id) }}" method="POST" style="display:inline;">
-                                <button type="submit" class="buy-btn" style="padding: 4px 10px; font-size: 12px; display:inline-block; width: auto; margin:0;">Eliminar</button>
+                                <button type="submit" class="buy-btn" style="padding: 4px 10px; font-size: 12px; display:inline-flex; align-items:center; gap:6px; width: auto; margin:0;">
+                                    <img src="{{ url_for('static', filename='imagenes/iconos/recycle-bin-svgrepo-com red.svg') }}" alt="" style="width:14px; height:14px;">
+                                    Eliminar
+                                </button>
                             </form>
                         </td>
                     </tr>

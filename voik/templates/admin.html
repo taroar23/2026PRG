@@ -12,6 +12,9 @@
     margin-top: 10px;
 }
 .admin-tab-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     padding: 12px 28px;
     background: transparent;
     border: none;
@@ -171,7 +174,7 @@
     <div class="admin-tabs" id="adminTabs">
         <button class="admin-tab-btn active" onclick="switchTab('productos')" id="tab-btn-productos"><img src="{{ url_for('static', filename='imagenes/iconos/' ~ ('tagwhite.svg.svg' if not session.get('light_mode', True) else 'tag.svg.svg')) }}" data-icon-base="tag" style="width:16px; height:16px; vertical-align:middle; margin-right:6px;"> Productos</button>
         <button class="admin-tab-btn" onclick="switchTab('usuarios')" id="tab-btn-usuarios"><img src="{{ url_for('static', filename='imagenes/iconos/' ~ ('userswhite.svg.svg' if not session.get('light_mode', True) else 'users.svg.svg')) }}" data-icon-base="users" style="width:16px; height:16px; vertical-align:middle; margin-right:6px;"> Usuarios</button>
-        <button class="admin-tab-btn" onclick="switchTab('compras')" id="tab-btn-compras">🛒 Compras</button>
+        <button class="admin-tab-btn" onclick="switchTab('compras')" id="tab-btn-compras"><img src="{{ url_for('static', filename='imagenes/iconos/' ~ ('shopping-cartwhite.svg.svg' if not session.get('light_mode', True) else 'shopping-cart.svg.svg')) }}" data-icon-base="shopping-cart" style="width:16px; height:16px; vertical-align:middle;"> Compras</button>
     </div>
 
     <!-- ═══════════════ PANEL: PRODUCTOS ═══════════════ -->
@@ -179,7 +182,12 @@
         <div class="section-header">
             <h2 style="font-weight: 400; font-size: 20px;">Gestión de Productos</h2>
             <a href="{{ url_for('admin_pdf_productos') }}" class="pdf-btn">
-                📄 Descargar PDF Productos
+                <img src="{{ url_for('static', filename='imagenes/iconos/' ~ ('new-report-svgrepo-com.svg' if not session.get('light_mode', True) else 'new-report-svgrepo-com white.svg')) }}"
+                     alt=""
+                     data-icon-light="{{ url_for('static', filename='imagenes/iconos/new-report-svgrepo-com white.svg') }}"
+                     data-icon-dark="{{ url_for('static', filename='imagenes/iconos/new-report-svgrepo-com.svg') }}"
+                     style="width:16px; height:16px;">
+                Descargar PDF Productos
             </a>
         </div>
 
@@ -231,7 +239,7 @@
 
             <!-- Eliminar producto -->
             <div style="background: var(--card-bg); border: 1px solid var(--card-border); padding: 30px; border-radius: 8px; margin-top: 10px;">
-                <h3 style="margin-bottom: 20px; font-weight: 500; font-size: 16px; color: #dc3545;"><img src="{{ url_for('static', filename='imagenes/iconos/' ~ ('trashwhite.svg.svg' if not session.get('light_mode', True) else 'trash.svg.svg')) }}" data-icon-base="trash" style="width:16px; height:16px; vertical-align:middle; margin-right:6px;"> Eliminar Producto</h3>
+                <h3 style="margin-bottom: 20px; font-weight: 500; font-size: 16px; color: #dc3545;"><img src="{{ url_for('static', filename='imagenes/iconos/recycle-bin-svgrepo-com red.svg') }}" alt="" style="width:16px; height:16px; vertical-align:middle; margin-right:6px;"> Eliminar Producto</h3>
                 <form action="{{ url_for('admin_eliminar_producto') }}" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar este producto?');">
                     <div class="form-group">
                         <label for="id_to_delete" class="form-label">Seleccionar Producto a Eliminar</label>
@@ -256,7 +264,12 @@
         <div class="section-header">
             <h2 style="font-weight: 400; font-size: 20px;">Gestión de Usuarios</h2>
             <a href="{{ url_for('admin_pdf_usuarios') }}" class="pdf-btn">
-                📄 Descargar PDF Usuarios
+                <img src="{{ url_for('static', filename='imagenes/iconos/' ~ ('new-report-svgrepo-com.svg' if not session.get('light_mode', True) else 'new-report-svgrepo-com white.svg')) }}"
+                     alt=""
+                     data-icon-light="{{ url_for('static', filename='imagenes/iconos/new-report-svgrepo-com white.svg') }}"
+                     data-icon-dark="{{ url_for('static', filename='imagenes/iconos/new-report-svgrepo-com.svg') }}"
+                     style="width:16px; height:16px;">
+                Descargar PDF Usuarios
             </a>
         </div>
 
@@ -301,7 +314,7 @@
                                 <option value="admin" {% if u.rol == 'admin' %}selected{% endif %}>admin</option>
                                 <option value="moderador" {% if u.rol == 'moderador' %}selected{% endif %}>moderador</option>
                             </select>
-                            <button type="submit" class="btn-sm" style="margin-left: 4px;">✓ Rol</button>
+                            <button type="submit" class="btn-sm" style="margin-left: 4px;">Aplicar</button>
                         </form>
                         <!-- Toggle Activo -->
                         <form action="{{ url_for('admin_toggle_activo') }}" method="POST" class="action-form-inline" style="margin-top: 4px; display: block;">
@@ -318,7 +331,7 @@
                         <form action="{{ url_for('admin_eliminar_usuario') }}" method="POST" class="action-form-inline" style="margin-top: 4px; display: block;">
                             <input type="hidden" name="usuario_id" value="{{ u.id }}">
                             <button type="submit" class="btn-sm btn-sm-danger" onclick="return confirm('¿Eliminar usuario y todas sus compras? Esta acción es irreversible.');">
-                                <img src="{{ url_for('static', filename='imagenes/iconos/' ~ ('trashwhite.svg.svg' if not session.get('light_mode', True) else 'trash.svg.svg')) }}" data-icon-base="trash" style="width:16px; height:16px; vertical-align:middle; margin-right:6px;"> Eliminar
+                                <img src="{{ url_for('static', filename='imagenes/iconos/recycle-bin-svgrepo-com red.svg') }}" alt="" style="width:14px; height:14px; vertical-align:middle; margin-right:4px;"> Eliminar
                             </button>
                         </form>
                     </td>
@@ -338,7 +351,12 @@
         <div class="section-header">
             <h2 style="font-weight: 400; font-size: 20px;">Historial de Compras</h2>
             <a href="{{ url_for('admin_pdf_compras') }}" class="pdf-btn">
-                📄 Descargar PDF Compras
+                <img src="{{ url_for('static', filename='imagenes/iconos/' ~ ('new-report-svgrepo-com.svg' if not session.get('light_mode', True) else 'new-report-svgrepo-com white.svg')) }}"
+                     alt=""
+                     data-icon-light="{{ url_for('static', filename='imagenes/iconos/new-report-svgrepo-com white.svg') }}"
+                     data-icon-dark="{{ url_for('static', filename='imagenes/iconos/new-report-svgrepo-com.svg') }}"
+                     style="width:16px; height:16px;">
+                Descargar PDF Compras
             </a>
         </div>
 

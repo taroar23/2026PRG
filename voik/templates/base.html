@@ -33,9 +33,29 @@
             
             <nav class="main-nav">
                 <ul class="nav-links">
-                    <li><a href="/" class="nav-item-link {% if request.path == '/' or request.path == '/galeria' %}active{% endif %}">Inicio</a></li>
-                    <li><a href="/nuevo" class="nav-item-link {% if request.path == '/nuevo' %}active{% endif %}">Nuevo</a></li>
-                    <li><a href="/tendencias" class="nav-item-link {% if request.path == '/tendencias' %}active{% endif %}">Tendencias</a></li>
+                    <li>
+                        <a href="/" class="nav-item-link {% if request.path == '/' or request.path == '/galeria' %}active{% endif %}">
+                            <img src="{{ url_for('static', filename='imagenes/iconos/' ~ ('housewhite.svg.svg' if not session.get('light_mode', True) else 'house.svg.svg')) }}"
+                                 alt="" data-icon-base="house">
+                            Inicio
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/nuevo" class="nav-item-link {% if request.path == '/nuevo' %}active{% endif %}">
+                            <img src="{{ url_for('static', filename='imagenes/iconos/' ~ ('new-report-svgrepo-com white.svg' if not session.get('light_mode', True) else 'new-report-svgrepo-com.svg')) }}"
+                                 alt=""
+                                 data-icon-light="{{ url_for('static', filename='imagenes/iconos/new-report-svgrepo-com.svg') }}"
+                                 data-icon-dark="{{ url_for('static', filename='imagenes/iconos/new-report-svgrepo-com white.svg') }}">
+                            Nuevo
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/tendencias" class="nav-item-link {% if request.path == '/tendencias' %}active{% endif %}">
+                            <img src="{{ url_for('static', filename='imagenes/iconos/' ~ ('trending-upwhite.svg.svg' if not session.get('light_mode', True) else 'trending-up.svg.svg')) }}"
+                                 alt="" data-icon-base="trending-up">
+                            Tendencias
+                        </a>
+                    </li>
                 </ul>
             </nav>
 
@@ -114,11 +134,18 @@
          * mientras que el tema hace su transición CSS de 500ms en paralelo.
          */
         function updateThemeIcons(isLight) {
-            const icons = document.querySelectorAll('[data-icon-base]');
+            const icons = document.querySelectorAll('[data-icon-base], [data-icon-light]');
             icons.forEach(icon => {
-                const baseName = icon.getAttribute('data-icon-base');
-                const suffix = isLight ? '.svg.svg' : 'white.svg.svg';
-                const newSrc = `/static/imagenes/iconos/${baseName}${suffix}`;
+                let newSrc;
+                if (icon.hasAttribute('data-icon-light') && icon.hasAttribute('data-icon-dark')) {
+                    newSrc = isLight
+                        ? icon.getAttribute('data-icon-light')
+                        : icon.getAttribute('data-icon-dark');
+                } else {
+                    const baseName = icon.getAttribute('data-icon-base');
+                    const suffix = isLight ? '.svg.svg' : 'white.svg.svg';
+                    newSrc = `/static/imagenes/iconos/${baseName}${suffix}`;
+                }
 
                 // Fade-out
                 icon.style.opacity = '0';

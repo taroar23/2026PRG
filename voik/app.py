@@ -755,7 +755,7 @@ def perfil_update_photo():
             db.commit()
             
             print(f"DEBUG: Foto guardada exitosamente")
-            flash('✅ Foto de perfil actualizada correctamente.', 'success')
+            flash('Foto de perfil actualizada correctamente.', 'success')
         finally:
             db.close()
             

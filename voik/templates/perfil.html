@@ -250,7 +250,12 @@
                 </h2>
                 <a href="{{ url_for('perfil_pdf_historial') }}" 
                    style="display:inline-flex; align-items:center; gap:6px; padding:8px 18px; background:var(--button-primary-bg); color:var(--button-primary-text); border-radius:4px; font-size:13px; font-weight:600; text-decoration:none;">
-                    📄 Descargar PDF
+                    <img src="{{ url_for('static', filename='imagenes/iconos/' ~ ('new-report-svgrepo-com.svg' if not session.get('light_mode', True) else 'new-report-svgrepo-com white.svg')) }}"
+                         alt=""
+                         data-icon-light="{{ url_for('static', filename='imagenes/iconos/new-report-svgrepo-com white.svg') }}"
+                         data-icon-dark="{{ url_for('static', filename='imagenes/iconos/new-report-svgrepo-com.svg') }}"
+                         style="width:16px; height:16px;">
+                    Descargar PDF
                 </a>
             </div>
             <hr>
@@ -332,7 +337,8 @@
                     </div>
                 {% endif %}
                 <button type="button" class="buy-btn" style="width: auto; padding: 10px 20px;" onclick="document.getElementById('modal-foto').classList.add('show')">
-                    📷 Cambiar foto
+                    <img src="{{ url_for('static', filename='imagenes/iconos/' ~ ('imagewhite.svg.svg' if not session.get('light_mode', True) else 'image.svg.svg')) }}" alt="" data-icon-base="image" style="width:15px; height:15px; vertical-align:middle; margin-right:6px;">
+                    Cambiar foto
                 </button>
             </div>
 
@@ -451,7 +457,10 @@
 <div class="modal-overlay" id="modal-info" onclick="if(event.target===this)this.classList.remove('show')">
     <div class="modal-box">
         <button class="modal-close" onclick="document.getElementById('modal-info').classList.remove('show')">✕</button>
-        <p class="modal-title">✏️ Editar Información Personal</p>
+        <p class="modal-title">
+            <img src="{{ url_for('static', filename='imagenes/iconos/' ~ ('user-penwhite.svg.svg' if not session.get('light_mode', True) else 'user-pen.svg.svg')) }}" alt="" data-icon-base="user-pen" style="width:16px; height:16px; vertical-align:middle; margin-right:6px;">
+            Editar Información Personal
+        </p>
         <form action="{{ url_for('perfil_update_info') }}" method="POST">
             <div class="form-group">
                 <label for="nuevo_nombre" class="form-label">Nuevo Nombre</label>
@@ -480,10 +489,13 @@
 <div class="modal-overlay" id="modal-foto" onclick="if(event.target===this)this.classList.remove('show')">
     <div class="modal-box">
         <button class="modal-close" onclick="document.getElementById('modal-foto').classList.remove('show')">✕</button>
-        <p class="modal-title">📷 Cambiar Foto de Perfil</p>
+        <p class="modal-title">
+            <img src="{{ url_for('static', filename='imagenes/iconos/' ~ ('imagewhite.svg.svg' if not session.get('light_mode', True) else 'image.svg.svg')) }}" alt="" data-icon-base="image" style="width:16px; height:16px; vertical-align:middle; margin-right:6px;">
+            Cambiar Foto de Perfil
+        </p>
         <form action="{{ url_for('perfil_update_photo') }}" method="POST" enctype="multipart/form-data">
             <div class="photo-upload-zone" onclick="document.getElementById('foto-input').click()">
-                <div style="font-size: 40px;">🖼️</div>
+                <img src="{{ url_for('static', filename='imagenes/iconos/' ~ ('imagewhite.svg.svg' if not session.get('light_mode', True) else 'image.svg.svg')) }}" alt="" data-icon-base="image" style="width:40px; height:40px;">
                 <p>Haz clic para seleccionar una imagen</p>
                 <p style="font-size: 11px; margin-top: 4px;">PNG, JPG, GIF, WEBP — máximo 2 MB</p>
             </div>
