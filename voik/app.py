@@ -460,20 +460,104 @@ def logout():
 
 # ─── CARRITO Y COMPRAS ────────────────────────────────────────────────────────
 
+def _parse_cart_qty(qty):
+    try:
+        qty = int(qty)
+    except (TypeError, ValueError):
+        return 0
+    return qty if qty > 0 else 0
+
+
+def process_checkout(db, user_id, cart):
+    """Crea la compra, descuenta existencia y guarda detalles.
+
+    Returns (compra, error_message). On error, nothing is committed.
+    """
+    cart_items = []
+    total_price = 0.0
+
+    for prod_id_str, qty in cart.items():
+        try:
+            prod_id = int(prod_id_str)
+        except (TypeError, ValueError):
+            continue
+        qty = _parse_cart_qty(qty)
+        if qty < 1:
+            continue
+        product = db.query(Producto).filter(Producto.id == prod_id).first()
+        if not product:
+            continue
+        if qty > product.existencia:
+            return None, (
+                f'No hay suficiente existencia de "{product.nombre}". '
+                f'Disponibles: {product.existencia}.'
+            )
+        subtotal = product.precio * qty
+        total_price += subtotal
+        cart_items.append({
+            'producto': product,
+            'qty': qty,
+            'subtotal': subtotal
+        })
+
+    if not cart_items:
+        return None, 'No se encontraron productos válidos en tu bolsa.'
+
+    nueva_compra = Compra(
+        usuario_id=user_id,
+        fecha=datetime.datetime.utcnow(),
+        total=total_price,
+        estado='completada'
+    )
+    db.add(nueva_compra)
+    db.flush()
+
+    for item in cart_items:
+        item['producto'].existencia -= item['qty']
+        db.add(DetalleCompra(
+            compra_id=nueva_compra.id,
+            producto_id=item['producto'].id,
+            nombre_producto=item['producto'].nombre,
+            precio_unitario=item['producto'].precio,
+            cantidad=item['qty'],
+            subtotal=item['subtotal']
+        ))
+
+    db.commit()
+    return nueva_compra, None
+
+
 @app.route('/comprar/<int:product_id>', methods=['POST'])
 def comprar_producto(product_id):
     if not session.get('user_id'):
         flash('Debes iniciar sesión para agregar productos al carrito.', 'warning')
         return redirect(url_for('login'))
-    
-    cart = session.get('cart', {})
-    product_id_str = str(product_id)
-    cart[product_id_str] = cart.get(product_id_str, 0) + 1
-    session['cart'] = cart
-    session.modified = True
-    
-    flash('Producto añadido a tu bolsa.', 'success')
-    return redirect(url_for('carrito'))
+
+    db = SessionLocal()
+    try:
+        product = db.query(Producto).filter(Producto.id == product_id).first()
+        if not product:
+            flash('Producto no encontrado.', 'warning')
+            return redirect(url_for('galeria'))
+
+        cart = session.get('cart', {})
+        product_id_str = str(product_id)
+        current_qty = _parse_cart_qty(cart.get(product_id_str, 0))
+        if current_qty + 1 > product.existencia:
+            flash(
+                f'No hay suficiente existencia de "{product.nombre}". '
+                f'Disponibles: {product.existencia}.',
+                'warning'
+            )
+            return redirect(url_for('carrito'))
+
+        cart[product_id_str] = current_qty + 1
+        session['cart'] = cart
+        session.modified = True
+        flash('Producto añadido a tu bolsa.', 'success')
+        return redirect(url_for('carrito'))
+    finally:
+        db.close()
 
 @app.route('/eliminar_carrito/<int:product_id>', methods=['POST'])
 def eliminar_carrito(product_id):
@@ -500,55 +584,18 @@ def checkout_carrito():
 
     db = SessionLocal()
     try:
-        cart_items = []
-        total_price = 0.0
-
-        for prod_id_str, qty in cart.items():
-            try:
-                prod_id = int(prod_id_str)
-                product = db.query(Producto).filter(Producto.id == prod_id).first()
-                if product:
-                    subtotal = product.precio * qty
-                    total_price += subtotal
-                    cart_items.append({
-                        'producto': product,
-                        'qty': qty,
-                        'subtotal': subtotal
-                    })
-            except ValueError:
-                continue
-
-        if not cart_items:
-            flash('No se encontraron productos válidos en tu bolsa.', 'warning')
+        nueva_compra, error = process_checkout(db, session['user_id'], cart)
+        if error:
+            flash(error, 'warning')
             return redirect(url_for('carrito'))
-
-        # Crear registro de compra en la BD
-        nueva_compra = Compra(
-            usuario_id=session['user_id'],
-            fecha=datetime.datetime.utcnow(),
-            total=total_price,
-            estado='completada'
-        )
-        db.add(nueva_compra)
-        db.flush()  # obtener el ID
-
-        # Crear detalles de compra
-        for item in cart_items:
-            detalle = DetalleCompra(
-                compra_id=nueva_compra.id,
-                producto_id=item['producto'].id,
-                nombre_producto=item['producto'].nombre,
-                precio_unitario=item['producto'].precio,
-                cantidad=item['qty'],
-                subtotal=item['subtotal']
-            )
-            db.add(detalle)
-
-        db.commit()
 
         session['cart'] = {}
         session.modified = True
-        flash(f'¡Compra #{nueva_compra.id} realizada con éxito! Total: ${total_price:,.0f}. Tu bolsa ha sido procesada.', 'success')
+        flash(
+            f'¡Compra #{nueva_compra.id} realizada con éxito! '
+            f'Total: ${nueva_compra.total:,.0f}. Tu bolsa ha sido procesada.',
+            'success'
+        )
         return redirect(url_for('carrito'))
 
     except Exception as e:
