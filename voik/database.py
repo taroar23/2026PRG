@@ -20,7 +20,9 @@ if all([DB_USER, DB_PASSWORD, DB_HOST, DB_NAME]):
         f"mysql+pymysql://{DB_USER}:{quote_plus(DB_PASSWORD)}"
         f"@{DB_HOST}:{DB_PORT}/{DB_NAME}"
     )
-    engine = create_engine(DATABASE_URI, echo=False, pool_pre_ping=True)
+    ca_path = os.path.join(base_dir, "ca.pem")
+    connect_args = {"ssl": {"ca": ca_path}} if os.path.exists(ca_path) else {}
+    engine = create_engine(DATABASE_URI, echo=False, pool_pre_ping=True, connect_args=connect_args)
     with engine.connect():
         pass
     print(f"✅ Conectado a MySQL en {DB_HOST}:{DB_PORT}/{DB_NAME}")
